@@ -11,7 +11,7 @@ import { setContext, getLocation, getRouteData, normalizeError } from './utils'
 
 /* Plugins */
 
-import nuxt_plugin_plugin_25e55404 from 'nuxt_plugin_plugin_25e55404' // Source: ./vuetify/plugin.js (mode: 'all')
+import nuxt_plugin_plugin_8ad48f4c from 'nuxt_plugin_plugin_8ad48f4c' // Source: ./vuetify/plugin.js (mode: 'all')
 import nuxt_plugin_vuemermaid_0286340c from 'nuxt_plugin_vuemermaid_0286340c' // Source: ../plugins/vue-mermaid (mode: 'all')
 import nuxt_plugin_vuesimplecontextmenu_fd74580a from 'nuxt_plugin_vuesimplecontextmenu_fd74580a' // Source: ../plugins/vue-simple-context-menu (mode: 'all')
 
@@ -152,8 +152,8 @@ async function createApp (ssrContext) {
 
   // Plugin execution
 
-  if (typeof nuxt_plugin_plugin_25e55404 === 'function') {
-    await nuxt_plugin_plugin_25e55404(app.context, inject)
+  if (typeof nuxt_plugin_plugin_8ad48f4c === 'function') {
+    await nuxt_plugin_plugin_8ad48f4c(app.context, inject)
   }
 
   if (typeof nuxt_plugin_vuemermaid_0286340c === 'function') {
