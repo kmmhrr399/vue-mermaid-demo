@@ -21,7 +21,7 @@ export default {
     return {
       clipped: false,
       fixed: false,
-      title: 'vue-mermaid demo'
+      title: 'Book Relation Map'
     }
   }
 }

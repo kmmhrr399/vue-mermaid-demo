@@ -4,12 +4,6 @@
       <h1 class="titled">
         {{ title }}
       </h1>
-      <vue-mermaid
-        :nodes="data"
-        :config="mermaid"
-        type="graph LR"
-        @nodeClick="editNode"
-      ></vue-mermaid>
       <div class="inputt">
         Set Parent :
         <input v-model="tgtparents" class="compwht" />
@@ -22,6 +16,12 @@
       </div>
       <br />
       check parent exist :{{ isexistparent }}
+    <vue-mermaid
+        :nodes="data"
+        :config="mermaid"
+        type="graph LR"
+        @nodeClick="editNode"
+      ></vue-mermaid>
     </div>
   </div>
 </template>
@@ -32,8 +32,8 @@ export default {
     return {
       tgtparents: '',
       newText: '',
-      currentmaxid: 6,
-      title: 'vue-mermaid demo',
+      currentmaxid: 1,
+      title: 'vue-mermaid',
       mermaid: {
         theme: 'default',
         startOnLoad: !1,
@@ -43,16 +43,8 @@ export default {
         {
           id: '1',
           text: 'A',
-          link: '---',
-          next: ['2'],
-          editable: true,
-          style: 'fill:#f9f,stroke:#333,stroke-width:4px'
-        },
-        { id: '2', text: 'B', edgeType: 'circle', next: ['3'] },
-        { id: '3', text: 'C', next: ['4', '6'], editable: true },
-        { id: '4', text: 'D', link: '-- This is the text ---', next: ['5'] },
-        { id: '5', text: 'E', editable: true },
-        { id: '6', text: 'F' }
+          editable: true
+        }
       ]
     }
   },
@@ -71,6 +63,7 @@ export default {
     editNode(nodeId) {
       const data = this.filterById(nodeId)
       alert('clicked node = ' + data.text)
+      this.tgtparents = data.text
     },
     filterByParents(text) {
       const dataarr = this.data
@@ -101,17 +94,25 @@ export default {
         }
       }
       const newNode = {
-        id: this.currentmaxid,
-        text: newtext
+        id: this.currentmaxid.toString(),
+        text: newtext,
+        editable: true
       }
       this.data.push(newNode)
-    }
+
+      this.clearText()
+    },
+    clearText(event){
+      this.tgtparents =""
+      this.newText=""
+    },
   }
 }
 </script>
 
 <style>
 .container {
+  top: 10px;
   margin: 0 auto;
   display: flex;
   justify-content: center;
@@ -120,6 +121,7 @@ export default {
 }
 
 .titled {
+  
   margin: auto;
   align-items: center;
   font-family: 'Quicksand', 'Source Sans Pro', -apple-system, BlinkMacSystemFont,
@@ -156,4 +158,5 @@ export default {
   background-color: #fff;
   /* background-color: #979797; */
 }
+
 </style>
