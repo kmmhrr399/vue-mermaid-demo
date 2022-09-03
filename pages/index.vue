@@ -39,6 +39,9 @@
       <button :disabled="isButtonAble" class="compwht" @click="check">
           check
         </button>
+              <button class="compwht" @click="easydelete">
+          EasyDelete
+        </button>
     <vue-mermaid
         :nodes="data"
         :config="mermaid"
@@ -59,6 +62,8 @@ export default {
       nextId: '',
       editText: '',
       currentmaxid: 3,
+      deleteCount:1,
+      existCount:3,
       title: 'vue-mermaid',
       mermaid: {
         theme: 'default',
@@ -86,6 +91,9 @@ export default {
     }
   },
   computed: {
+    countid(event){
+      return this.deleteCount + this.existCount
+    },
     isexistparent(event) {
       return !this.isButtonAble ? 'OK' : 'NG'
     },
@@ -202,6 +210,12 @@ export default {
       else{
         alert("このノードを削除します。")
       }
+    },
+    easydelete(event){
+      this.data.slice(1,1)
+      //this.data[0].next[0] = '3'
+      alert("最後の項目を削除しました")
+      this.currentmaxid--
     }
   }
 }
