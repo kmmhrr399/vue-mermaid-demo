@@ -7,20 +7,30 @@
       <div class="inputt">
         Set Parent :
         <input v-model="tgtparents" class="compwht" />
+        NO:
+        <input v-model="tgnumber" class="compwht" />
       </div>
       <div class="inputt">
         Set Text : <input v-model="newText" class="compwht" />
+        
         <button :disabled="isButtonAble" class="compwht" @click="addNewNode">
           Add
         </button>
       </div>
+        <div class = "inputt">
+          Link:
+        <input v-model="nextId" class="compwht" />
+        <button :disabled="isButtonAble" class="compwht" @click="addNext">
+          Link
+        </button>
+        </div>
       <br />
       check parent exist :{{ isexistparent }}
     <vue-mermaid
         :nodes="data"
         :config="mermaid"
         type="graph LR"
-        @nodeClick="editNode"
+        @nodeClick="alertNode"
       ></vue-mermaid>
     </div>
   </div>
@@ -32,7 +42,9 @@ export default {
     return {
       tgtparents: '',
       newText: '',
-      currentmaxid: 1,
+      tgnumber: '',
+      nextId: '',
+      currentmaxid: 3,
       title: 'vue-mermaid',
       mermaid: {
         theme: 'default',
@@ -43,6 +55,17 @@ export default {
         {
           id: '1',
           text: 'A',
+          next:['2'],
+          editable: true
+        },
+        {
+          id: '2',
+          text: 'B',
+          editable: true
+        },
+        {
+          id: '3',
+          text: 'c',
           editable: true
         }
       ]
@@ -60,16 +83,17 @@ export default {
     }
   },
   methods: {
-    editNode(nodeId) {
+    alertNode(nodeId) {
       const data = this.filterById(nodeId)
-      alert('clicked node = ' + data.text)
+      alert('clicked node = ' + data.text + '  number is'+data.id)
       this.tgtparents = data.text
+      this.tgnumber = data.id
     },
     filterByParents(text) {
-      const dataarr = this.data
+      const dataarr = this.data //export default のdata内にあるdata配列をdataarrに入れる
       for (let i = 0; i < this.currentmaxid; i++) {
         if (dataarr[i].text === text) return dataarr[i]
-      }
+      }//dataarrにあるテキストと入力したテキストが一致したら、この関数は一致したオブジェクトの内容をもつ。
       return null
     },
     filterById(id) {
@@ -99,13 +123,30 @@ export default {
         editable: true
       }
       this.data.push(newNode)
-
       this.clearText()
     },
     clearText(event){
       this.tgtparents =""
       this.newText=""
+      this.tgnumber =""
+      this.nextId =""
     },
+    addNext(event) {
+      const parent = this.filterByParents(this.tgtparents) //nextに追加されるのノード
+      const tagetId = parent.id //nextに追加されるのノードのIDの文字列
+      for (let i = 0; i < this.currentmaxid; i++) //該当するID探して、nextに追加する
+      {
+        if (this.data[i].id === tagetId) //該当するIDを見つけた時
+        {
+          const newel = String(this.nextId) //newelに新しいIDの文字列を加える。既存のノードにnextを追加するときはここをいじる
+          if (this.data[i].next === undefined) {
+            this.data[i].next = []
+          }
+          this.data[i].next.push(newel)
+        }
+      }
+      this.clearText()
+    }
   }
 }
 </script>
@@ -121,7 +162,6 @@ export default {
 }
 
 .titled {
-  
   margin: auto;
   align-items: center;
   font-family: 'Quicksand', 'Source Sans Pro', -apple-system, BlinkMacSystemFont,
