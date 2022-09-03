@@ -87,7 +87,7 @@ export default {
       return !this.isButtonAble ? 'OK' : 'NG'
     },
     isButtonAble(event) {
-      return this.filterByParents(this.tgtparents) === null
+      return this.filterByText(this.tgtparents) === null
     },
     nowNextA(event) {
       return this.data[0].next
@@ -100,7 +100,7 @@ export default {
       this.tgtparents = data.text
       this.tgnumber = data.id
     },
-    filterByParents(text) {
+    filterByText(text) {
       const dataarr = this.data //export default のdata内にあるdata配列をdataarrに入れる
       for (let i = 0; i < this.currentmaxid; i++) {
         if (dataarr[i].text === text) return dataarr[i]
@@ -115,7 +115,7 @@ export default {
       return null
     },
     addNewNode(event) {
-      const parent = this.filterByParents(this.tgtparents)
+      const parent = this.filterByText(this.tgtparents)
       const tagetId = parent.id
       const newtext = this.newText === '' ? 'new_el' : this.newText
       this.currentmaxid++
@@ -143,8 +143,9 @@ export default {
       this.nextId =""
     },
     addNext(event) {
-      const parent = this.filterByParents(this.tgtparents) //nextに追加されるのノード
+      const parent = this.filterByText(this.tgtparents) //nextに追加されるのノード
       const tagetId = parent.id //nextに追加されるのノードのIDの文字列
+      const child = this.filterByText(this.nextId)
       for (let i = 0; i < this.currentmaxid; i++) //該当するID探して、nextに追加する
       {
         if (this.data[i].id === tagetId) //該当するIDを見つけた時
@@ -153,13 +154,13 @@ export default {
           if (this.data[i].next === undefined) {
             this.data[i].next = []
           }
-          this.data[i].next.push(newel)
+          this.data[i].next.push(child.id)
         }
       }
       this.clearText()
     },
     editNode(event) {
-      const parent = this.filterByParents(this.tgtparents) //nextに追加されるのノード
+      const parent = this.filterByText(this.tgtparents) //nextに追加されるのノード
       const tagetId = parent.id //nextに追加されるのノードのIDの文字列
       for (let i = 0; i < this.currentmaxid; i++) //該当するID探して、nextに追加する
       {
@@ -171,14 +172,14 @@ export default {
       this.clearText()
     },
     deleteNode(event) {
-      const parent = this.filterByParents(this.tgtparents) //nextに追加されるのノード
+      const parent = this.filterByText(this.tgtparents) //nextに追加されるのノード
       const tagetId = parent.id //nextに追加されるのノードのIDの文字列
-      for (let i = 0; i < this.currentmaxid; i++) //該当するID探して、nextに追加する
-      {
-        if(this.data[i].next !== undefined){
-          alert("このノードは他のノードと繋がっているため、削除できません。")
+        if(this.parent.next !== undefined){
+            alert("このノードは他のノードと繋がっているため、削除できません。")
+        } 
+        else{
+          //alert("このノードを削除します。")
         }
-      }
       this.clearText()
     }
   }
