@@ -42,10 +42,13 @@
               <button class="compwht" @click="easydelete">
           EasyDelete
         </button>
+        <button class="compwht" @click="ketugou">
+          結合
+        </button>
     <vue-mermaid
         :nodes="data"
         :config="mermaid"
-        type="graph LR"
+        type="graph TD"
         @nodeClick="alertNode"
       ></vue-mermaid>
     </div>
@@ -61,7 +64,7 @@ export default {
       tgnumber: '',
       nextId: '',
       editText: '',
-      currentmaxid: 3,
+      currentmaxid:1,
       deleteCount:1,
       existCount:3,
       title: 'vue-mermaid',
@@ -74,20 +77,28 @@ export default {
         {
           id: '1',
           text: 'A',
-          next:['2'],
           editable: true
         },
-        {
+      ],
+      node1:[
+                {
           id: '2',
           text: 'B',
           editable: true
         },
+         
         {
           id: '3',
           text: 'c',
           editable: true
+        },
+       {
+          id: '4',
+          text: 'D',
+          editable: true
         }
       ]
+
     }
   },
   computed: {
@@ -107,7 +118,7 @@ export default {
   methods: {
     alertNode(nodeId) {
       const data = this.filterById(nodeId)
-      alert('clicked node = ' + data.text + '  number is'+data.id)
+      alert('clicked node = ' + data.text + '\n  number is'+data.id)
       this.tgtparents = data.text
       this.tgnumber = data.id
     },
@@ -216,6 +227,16 @@ export default {
       //this.data[0].next[0] = '3'
       alert("最後の項目を削除しました")
       this.currentmaxid--
+    },
+    ketugou(event){
+      alert("結合します")
+      const a = this.data.concat()
+      console.log(a)
+      console.log(this.data)
+      for(let i = 0;i<this.node1.length;i++)
+      {
+        this.data.push(this.node1[i])
+      }
     }
   }
 }
