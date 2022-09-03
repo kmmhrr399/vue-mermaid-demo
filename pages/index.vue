@@ -24,6 +24,13 @@
           Link
         </button>
         </div>
+        <div class = "inputt">
+          Edit:
+        <input v-model="editText" class="compwht" />
+        <button :disabled="isButtonAble" class="compwht" @click="editNode">
+          Edit
+        </button>
+        </div>
       <br />
       check parent exist :{{ isexistparent }}
     <vue-mermaid
@@ -44,6 +51,7 @@ export default {
       newText: '',
       tgnumber: '',
       nextId: '',
+      editText: '',
       currentmaxid: 3,
       title: 'vue-mermaid',
       mermaid: {
@@ -143,6 +151,18 @@ export default {
             this.data[i].next = []
           }
           this.data[i].next.push(newel)
+        }
+      }
+      this.clearText()
+    },
+    editNode(event) {
+      const parent = this.filterByParents(this.tgtparents) //nextに追加されるのノード
+      const tagetId = parent.id //nextに追加されるのノードのIDの文字列
+      for (let i = 0; i < this.currentmaxid; i++) //該当するID探して、nextに追加する
+      {
+        if (this.data[i].id === tagetId) //該当するIDを見つけた時
+        {
+          this.data[i].text=this.editText
         }
       }
       this.clearText()
