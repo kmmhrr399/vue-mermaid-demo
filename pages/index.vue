@@ -9,6 +9,9 @@
         <input v-model="tgtparents" class="compwht" />
         NO:
         <input v-model="tgnumber" class="compwht" />
+        <button :disabled="isButtonAble" class="compwht" @click="deleteNode">
+          Delete
+        </button>
       </div>
       <div class="inputt">
         Set Text : <input v-model="newText" class="compwht" />
@@ -163,6 +166,17 @@ export default {
         if (this.data[i].id === tagetId) //該当するIDを見つけた時
         {
           this.data[i].text=this.editText
+        }
+      }
+      this.clearText()
+    },
+    deleteNode(event) {
+      const parent = this.filterByParents(this.tgtparents) //nextに追加されるのノード
+      const tagetId = parent.id //nextに追加されるのノードのIDの文字列
+      for (let i = 0; i < this.currentmaxid; i++) //該当するID探して、nextに追加する
+      {
+        if(this.data[i].next !== undefined){
+          alert("このノードは他のノードと繋がっているため、削除できません。")
         }
       }
       this.clearText()
