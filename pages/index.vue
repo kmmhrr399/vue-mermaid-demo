@@ -36,6 +36,9 @@
         </div>
       <br />
       check parent exist :{{ isexistparent }}
+      <button :disabled="isButtonAble" class="compwht" @click="check">
+          check
+        </button>
     <vue-mermaid
         :nodes="data"
         :config="mermaid"
@@ -174,13 +177,31 @@ export default {
     deleteNode(event) {
       const parent = this.filterByText(this.tgtparents) //nextに追加されるのノード
       const tagetId = parent.id //nextに追加されるのノードのIDの文字列
-        if(this.parent.next !== undefined){
-            alert("このノードは他のノードと繋がっているため、削除できません。")
-        } 
-        else{
-          //alert("このノードを削除します。")
+
+        for(let i =0; i < this.currentmaxid;i++)
+        {
+          if (this.data[i].id === tagetId) //該当するIDを見つけた時
+          {
+            if(this.data[i].next === undefined){
+              alert("このノードを削除します。")
+            }
+            else{
+              alert("このノードは他のノードと繋がっているため、削除できません。")
+            }
+          }
         }
-      this.clearText()
+        this.clearText()
+    },
+    check(event){
+      const parent = this.filterByText(this.tgtparents) //nextに追加されるのノード
+      const tagetId = parent.id //nextに追加されるのノードのIDの文字列
+      if(parent.next !== undefined)
+      {
+        alert("このノードは他のノードと繋がっているため、削除できません。")
+      }
+      else{
+        alert("このノードを削除します。")
+      }
     }
   }
 }
