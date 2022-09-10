@@ -1,12 +1,11 @@
 <template>
   <div class="container">
-    <div>
-      <h1 class="titled">
-        {{ title }}
-      </h1>
+    <div class="titled">
       <div class="inputt">
         Set Parent :
         <input v-model="tgtparents" class="compwht" />
+      </div>
+      <div class="inputt">
         NO:
         <input v-model="tgnumber" class="compwht" />
         <button :disabled="isButtonAble" class="compwht" @click="deleteNode">
@@ -15,7 +14,6 @@
       </div>
       <div class="inputt">
         Set Text : <input v-model="newText" class="compwht" />
-        
         <button :disabled="isButtonAble" class="compwht" @click="addNewNode">
           Add
         </button>
@@ -46,16 +44,24 @@
           結合
         </button>
     <vue-mermaid
+        class = "mermaid"
         :nodes="data"
         :config="mermaid"
         type="graph TD"
         @nodeClick="alertNode"
       ></vue-mermaid>
     </div>
+    <div class = "markdown">
+      <markdown :message='nodeMemoTitle' :id="nodeMemoId"></markdown>
+      <!-- <eMark></eMark> -->
+    </div>
   </div>
 </template>
 
 <script>
+import markdown from './markdown.vue'
+//import editor from './marked.vue'
+import eMark from './eMark.vue'
 export default {
   data() {
     return {
@@ -67,6 +73,8 @@ export default {
       currentmaxid:1,
       deleteCount:1,
       existCount:3,
+      nodeMemoTitle:'nodeMemo...',
+      nodeMemoId:"1",
       title: 'vue-mermaid',
       mermaid: {
         theme: 'default',
@@ -81,22 +89,6 @@ export default {
         },
       ],
       node1:[
-                {
-          id: '2',
-          text: 'B',
-          editable: true
-        },
-         
-        {
-          id: '3',
-          text: 'c',
-          editable: true
-        },
-       {
-          id: '4',
-          text: 'D',
-          editable: true
-        }
       ]
 
     }
@@ -116,11 +108,13 @@ export default {
     }
   },
   methods: {
+
     alertNode(nodeId) {
       const data = this.filterById(nodeId)
       alert('clicked node = ' + data.text + '\n  number is'+data.id)
       this.tgtparents = data.text
       this.tgnumber = data.id
+      this.nodeMemo = data.text
     },
     filterByText(text) {
       const dataarr = this.data //export default のdata内にあるdata配列をdataarrに入れる
@@ -140,14 +134,16 @@ export default {
       const parent = this.filterByText(this.tgtparents)
       const tagetId = parent.id
       const newtext = this.newText === '' ? 'new_el' : this.newText
+      this.node1=this.data.concat()
+      this.data.length =1
       this.currentmaxid++
       for (let i = 0; i < this.currentmaxid - 1; i++) {
-        if (this.data[i].id === tagetId) {
+        if (this.node1[i].id === tagetId) {
           const newel = String(this.currentmaxid)
-          if (this.data[i].next === undefined) {
-            this.data[i].next = []
+          if (this.node1[i].next === undefined) {
+            this.node1[i].next = []
           }
-          this.data[i].next.push(newel)
+          this.node1[i].next.push(newel)
         }
       }
       const newNode = {
@@ -155,8 +151,10 @@ export default {
         text: newtext,
         editable: true
       }
-      this.data.push(newNode)
+      this.node1.push(newNode)
       this.clearText()
+      this.ketugou();
+      this.node1.length =0
     },
     clearText(event){
       this.tgtparents =""
@@ -168,18 +166,22 @@ export default {
       const parent = this.filterByText(this.tgtparents) //nextに追加されるのノード
       const tagetId = parent.id //nextに追加されるのノードのIDの文字列
       const child = this.filterByText(this.nextId)
+      this.node1=this.data.concat()
+      this.data.length =1
       for (let i = 0; i < this.currentmaxid; i++) //該当するID探して、nextに追加する
       {
-        if (this.data[i].id === tagetId) //該当するIDを見つけた時
+        if (this.node1[i].id === tagetId) //該当するIDを見つけた時
         {
           const newel = String(this.nextId) //newelに新しいIDの文字列を加える。既存のノードにnextを追加するときはここをいじる
-          if (this.data[i].next === undefined) {
-            this.data[i].next = []
+          if (this.node1[i].next === undefined) {
+            this.node1[i].next = []
           }
-          this.data[i].next.push(child.id)
+          this.node1[i].next.push(child.id)
         }
       }
       this.clearText()
+      this.ketugou()
+      this.node1.length =0
     },
     editNode(event) {
       const parent = this.filterByText(this.tgtparents) //nextに追加されるのノード
@@ -230,14 +232,16 @@ export default {
     },
     ketugou(event){
       alert("結合します")
-      const a = this.data.concat()
-      console.log(a)
-      console.log(this.data)
-      for(let i = 0;i<this.node1.length;i++)
+      for(let i = 1;i<this.node1.length;i++)//一つ目のノードを残すためにi=1にしてます。
       {
         this.data.push(this.node1[i])
       }
     }
+  },
+  components:{
+    markdown:markdown,
+    //editor:editor,
+    eMark:eMark,
   }
 }
 </script>
@@ -253,13 +257,13 @@ export default {
 }
 
 .titled {
+  width: 60%;
   margin: auto;
-  align-items: center;
+  align-items: left;
   font-family: 'Quicksand', 'Source Sans Pro', -apple-system, BlinkMacSystemFont,
     'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
   display: block;
-  font-weight: 300;
-  font-size: 50px;
+  font-size: 20px;
   color: #35495e;
   letter-spacing: 1px;
 }
@@ -288,6 +292,10 @@ export default {
 .v-application--wrap {
   background-color: #fff;
   /* background-color: #979797; */
+}
+
+.mermaid{
+  width: flex;
 }
 
 </style>
