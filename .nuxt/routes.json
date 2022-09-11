@@ -1,0 +1,30 @@
+[
+  {
+    "name": "eMark",
+    "path": "/eMark",
+    "component": "/Users/haruki/MyVueMermaid/pages/eMark.vue",
+    "chunkName": "pages/eMark",
+    "_name": "_8ba40018"
+  },
+  {
+    "name": "markdown",
+    "path": "/markdown",
+    "component": "/Users/haruki/MyVueMermaid/pages/markdown.vue",
+    "chunkName": "pages/markdown",
+    "_name": "_dbfe1386"
+  },
+  {
+    "name": "marked",
+    "path": "/marked",
+    "component": "/Users/haruki/MyVueMermaid/pages/marked.vue",
+    "chunkName": "pages/marked",
+    "_name": "_2f79bc7a"
+  },
+  {
+    "name": "index",
+    "path": "/",
+    "component": "/Users/haruki/MyVueMermaid/pages/index.vue",
+    "chunkName": "pages/index",
+    "_name": "_0efd3018"
+  }
+]

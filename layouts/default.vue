@@ -10,7 +10,7 @@
       </v-container>
     </v-content>
     <v-footer :fixed="fixed" app>
-      <span>&copy; bwsunkist {{ new Date().getFullYear() }}</span>
+      <span>&copy; km {{ new Date().getFullYear() }}</span>
     </v-footer>
   </v-app>
 </template>

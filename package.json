@@ -6,7 +6,7 @@
   },
   "version": "1.0.0",
   "description": "The demo page of &#34;vue-mermaid&#34;",
-  "author": "bwsunkist",
+  "author": "km",
   "private": true,
   "scripts": {
     "dev": "nuxt",
@@ -17,7 +17,7 @@
     "dev-debug": "node --inspect-brk=9229 node_modules/nuxt/bin/nuxt"
   },
   "dependencies": {
-    "core-js": "^3.6.5",
+    "core-js": "^3.25.1",
     "date-utils": "^1.2.21",
     "firebase": "^8.10.0",
     "mavon-editor": "^2.10.4",
