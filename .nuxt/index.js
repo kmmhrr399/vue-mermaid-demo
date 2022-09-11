@@ -14,6 +14,8 @@ import { setContext, getLocation, getRouteData, normalizeError } from './utils'
 import nuxt_plugin_plugin_8ad48f4c from 'nuxt_plugin_plugin_8ad48f4c' // Source: ./vuetify/plugin.js (mode: 'all')
 import nuxt_plugin_vuemermaid_0286340c from 'nuxt_plugin_vuemermaid_0286340c' // Source: ../plugins/vue-mermaid (mode: 'all')
 import nuxt_plugin_vuesimplecontextmenu_fd74580a from 'nuxt_plugin_vuesimplecontextmenu_fd74580a' // Source: ../plugins/vue-simple-context-menu (mode: 'all')
+import nuxt_plugin_vuemavoneditor_e5e1de58 from 'nuxt_plugin_vuemavoneditor_e5e1de58' // Source: ../plugins/vue-mavon-editor (mode: 'client')
+import nuxt_plugin_firebase_27cb801c from 'nuxt_plugin_firebase_27cb801c' // Source: ../plugins/firebase.js (mode: 'all')
 
 // Component: <ClientOnly>
 Vue.component(ClientOnly.name, ClientOnly)
@@ -162,6 +164,14 @@ async function createApp (ssrContext) {
 
   if (typeof nuxt_plugin_vuesimplecontextmenu_fd74580a === 'function') {
     await nuxt_plugin_vuesimplecontextmenu_fd74580a(app.context, inject)
+  }
+
+  if (process.client && typeof nuxt_plugin_vuemavoneditor_e5e1de58 === 'function') {
+    await nuxt_plugin_vuemavoneditor_e5e1de58(app.context, inject)
+  }
+
+  if (typeof nuxt_plugin_firebase_27cb801c === 'function') {
+    await nuxt_plugin_firebase_27cb801c(app.context, inject)
   }
 
   // If server-side, wait for async component to be resolved first

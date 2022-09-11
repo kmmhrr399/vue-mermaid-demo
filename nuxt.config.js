@@ -1,7 +1,7 @@
 import colors from 'vuetify/es5/util/colors'
 
 export default {
-  mode: 'spa',
+  mode: 'universal',
   /*
    ** Headers of the page
    */
@@ -30,7 +30,9 @@ export default {
   /*
    ** Plugins to load before mounting the App
    */
-  plugins: ['~/plugins/vue-mermaid', '~/plugins/vue-simple-context-menu'],
+  plugins: ['~/plugins/vue-mermaid', '~/plugins/vue-simple-context-menu',
+  { src: '@/plugins/vue-mavon-editor', ssr: false},
+  { src:'~/plugins/firebase.js',ssr: false} ],
   /*
    ** Nuxt.js dev-modules
    */

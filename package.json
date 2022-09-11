@@ -1,5 +1,9 @@
 {
   "name": "vue-mermaid-demo",
+  "engines": {
+    "node": "14.18.0",
+    "npm": "6.14.15"
+  },
   "version": "1.0.0",
   "description": "The demo page of &#34;vue-mermaid&#34;",
   "author": "bwsunkist",
@@ -13,7 +17,12 @@
     "dev-debug": "node --inspect-brk=9229 node_modules/nuxt/bin/nuxt"
   },
   "dependencies": {
+    "core-js": "^3.6.5",
+    "date-utils": "^1.2.21",
+    "firebase": "^8.10.0",
+    "mavon-editor": "^2.10.4",
     "nuxt": "^2.0.0",
+    "typescript": "^3.7.7",
     "vue-mermaid": "^0.0.12",
     "vue-simple-context-menu": "^3.1.10"
   },
@@ -27,5 +36,18 @@
     "eslint-plugin-nuxt": ">=0.4.2",
     "eslint-plugin-prettier": "^3.1.2",
     "prettier": "^1.19.1"
-  }
+  },
+  "main": "nuxt.config.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kmmhrr399/apptest.git"
+  },
+  "keywords": [
+    "3hrkkmd3"
+  ],
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/kmmhrr399/apptest/issues"
+  },
+  "homepage": "https://github.com/kmmhrr399/apptest#readme"
 }
