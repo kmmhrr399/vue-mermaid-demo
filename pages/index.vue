@@ -52,7 +52,7 @@
       ></vue-mermaid>
     </div>
     <div class = "markdown">
-      <markdown :message='nodeMemoTitle' :id="nodeMemoId"></markdown>
+      <markdown :message='nodeMemoTitle' :id="nodeMemo"></markdown>
       <!-- <eMark></eMark> -->
     </div>
   </div>

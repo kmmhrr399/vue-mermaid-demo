@@ -2,7 +2,7 @@
     <div class="markdown-editor">
       <button @click="changeEditorOn">edit</button>
       <div v-if="editorOn">
-        <h3>{{message}}</h3>
+        <h3>{{id}}</h3>
       <mavon-editor
         :toolbars="markdownOption"
         language="en"
