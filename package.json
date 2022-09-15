@@ -19,7 +19,8 @@
   "dependencies": {
     "core-js": "^3.25.1",
     "date-utils": "^1.2.21",
-    "firebase": "^8.10.0",
+    "firebase": "^8.10.1",
+    "firebase-tools": "^11.9.0",
     "mavon-editor": "^2.10.4",
     "nuxt": "^2.0.0",
     "typescript": "^3.7.7",
