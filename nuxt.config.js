@@ -32,7 +32,6 @@ export default {
    */
   plugins: ['~/plugins/vue-mermaid', '~/plugins/vue-simple-context-menu',
   { src: '@/plugins/vue-mavon-editor', ssr: false},
-  // { src:'~/plugins/firebase.js',ssr: false} 
 ],
   /*
    ** Nuxt.js dev-modules
@@ -46,7 +45,22 @@ export default {
   /*
    ** Nuxt.js modules
    */
-  modules: [],
+  modules: [  '@nuxtjs/firebase',],
+  firebase: {
+    // options
+    config: {
+      apiKey: "AIzaSyDj0iJjFlV-NbF0LZKJcEMBAKVzA-JF6ok",
+      authDomain: "vuemermaidmarkdown1.firebaseapp.com",
+      projectId: "vuemermaidmarkdown1",
+      storageBucket: "vuemermaidmarkdown1.appspot.com",
+      messagingSenderId: "843442527675",
+      appId: "1:843442527675:web:6e75820d1903377939f89e",
+      measurementId: "G-0QHG8DC1N2"
+    },
+    services: {
+      auth: true // Just as example. Can be any other service.
+    }
+  },
   /*
    ** vuetify module configuration
    ** https://github.com/nuxt-community/vuetify-module

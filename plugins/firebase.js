@@ -2,6 +2,8 @@
 import { initializeApp } from "firebase/app"
 import { getAnalytics } from "firebase/analytics"
 import { getFirestore } from "firebase/firestore"
+import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -17,5 +19,8 @@ const firebaseConfig = {
 const firebase = initializeApp(firebaseConfig)
 const database = getFirestore(firebase)
 const analytics = getAnalytics(firebase)
+//const getAuth = getAuth(firebase)
+//const signInWithPopup = signInWithPopup(firebase)
+//const GoogleAuthProvider = GoogleAuthProvider(firebase)
 
 export default database

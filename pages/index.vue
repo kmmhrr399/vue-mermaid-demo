@@ -1,6 +1,7 @@
 <template>
   <div class="container">
     <div class="titled">
+      <Login></Login>
       <div class="inputt">
         Set Parent :
         <input v-model="tgtparents" class="compwht" />
@@ -34,10 +35,10 @@
         </div>
       <br />
       check parent exist :{{ isexistparent }}
-      <button :disabled="isButtonAble" class="compwht" @click="check">
+      <button class="compwht" @click="check">
           check
         </button>
-              <button class="compwht" @click="easydelete">
+              <button :disabled="isButtonAble" class="compwht" @click="easydelete">
           EasyDelete
         </button>
         <button class="compwht" @click="ketugou">
@@ -52,7 +53,7 @@
       ></vue-mermaid>
     </div>
     <div class = "markdown">
-      <markdown :message='nodeMemoTitle' :id="nodeMemo"></markdown>
+      <markdown :message='nodeMemoTitle' :id="nodeMemoId"></markdown>
       <!-- <eMark></eMark> -->
     </div>
   </div>
@@ -61,7 +62,7 @@
 <script>
 import markdown from './markdown.vue'
 //import editor from './marked.vue'
-import eMark from './eMark.vue'
+import Login from './login.vue'
 export default {
   data() {
     return {
@@ -70,9 +71,9 @@ export default {
       tgnumber: '',
       nextId: '',
       editText: '',
-      currentmaxid:1,
-      deleteCount:1,
-      existCount:3,
+      currentmaxid:4,
+      deleteCount:0,
+      existCount:4,
       nodeMemoTitle:'nodeMemo...',
       nodeMemoId:"1",
       title: 'vue-mermaid',
@@ -85,7 +86,26 @@ export default {
         {
           id: '1',
           text: 'A',
-          editable: true
+          editable: true,
+          next :['2','3'],
+        },
+        {
+          id: '2',
+          text: 'B',
+          editable: true,
+          next :[],
+        },
+        {
+          id: '3',
+          text: 'C',
+          editable: true,
+          next :['4'],
+        },
+        {
+          id: '4',
+          text: 'D',
+          editable: true,
+          next :[],
         },
       ],
       node1:[
@@ -115,6 +135,8 @@ export default {
       this.tgtparents = data.text
       this.tgnumber = data.id
       this.nodeMemo = data.text
+      this.nodeMemoTitle = data.text
+      this.nodeMemoId = data.id
     },
     filterByText(text) {
       const dataarr = this.data //export default のdata内にあるdata配列をdataarrに入れる
@@ -126,7 +148,7 @@ export default {
     filterById(id) {
       const dataarr = this.data
       for (let i = 0; i < this.currentmaxid; i++) {
-        if (dataarr[i].id === id) return dataarr[i]
+        if (dataarr[i].id == id) return dataarr[i]
       }
       return null
     },
@@ -135,27 +157,30 @@ export default {
       const tagetId = parent.id
       const newtext = this.newText === '' ? 'new_el' : this.newText
       this.node1=this.data.concat()
+      //画面に描画するための”data”の中身を削除する。
       this.data.length =1
       this.currentmaxid++
+      this.existCount++
+      //目的ののーどIDを見つけ出し、もし初めてリンクするなら、リンクという配列を作る。
       for (let i = 0; i < this.currentmaxid - 1; i++) {
         if (this.node1[i].id === tagetId) {
           const newel = String(this.currentmaxid)
           if (this.node1[i].next === undefined) {
             this.node1[i].next = []
           }
-          this.node1[i].next.push(newel)
+          this.node1[i].next.push(this.existCount.toString())
         }
       }
       const newNode = {
-        id: this.currentmaxid.toString(),
+        id: this.existCount.toString(),
         text: newtext,
         editable: true
       }
       this.node1.push(newNode)
       this.clearText()
       this.ketugou();
-      this.node1.length =0
     },
+
     clearText(event){
       this.tgtparents =""
       this.newText=""
@@ -168,7 +193,7 @@ export default {
       const child = this.filterByText(this.nextId)
       this.node1=this.data.concat()
       this.data.length =1
-      for (let i = 0; i < this.currentmaxid; i++) //該当するID探して、nextに追加する
+      for (let i = 0; i < this.node1.length; i++) //該当するID探して、nextに追加する
       {
         if (this.node1[i].id === tagetId) //該当するIDを見つけた時
         {
@@ -181,7 +206,6 @@ export default {
       }
       this.clearText()
       this.ketugou()
-      this.node1.length =0
     },
     editNode(event) {
       const parent = this.filterByText(this.tgtparents) //nextに追加されるのノード
@@ -196,52 +220,109 @@ export default {
       this.clearText()
     },
     deleteNode(event) {
+      alert("削除を始めます。")
       const parent = this.filterByText(this.tgtparents) //nextに追加されるのノード
       const tagetId = parent.id //nextに追加されるのノードのIDの文字列
-
+      this.node1=this.data.concat()
+      this.data.length =1
+      alert(tagetId+"番を削除します")
         for(let i =0; i < this.currentmaxid;i++)
         {
-          if (this.data[i].id === tagetId) //該当するIDを見つけた時
+          alert(i+1+"回目。")
+          if (this.node1[i].id === tagetId) //該当するIDを見つけた時
           {
-            if(this.data[i].next === undefined){
+            alert("削除対象を見つけました。")
+            if(this.node1[i].next === undefined || this.node1[i].next == []){
               alert("このノードを削除します。")
+              this.node1.splice(i,1)
+              alert("このノードを削除しました。node1の長さは" + this.node1.length + "です。")
             }
             else{
               alert("このノードは他のノードと繋がっているため、削除できません。")
             }
           }
         }
-        this.clearText()
+      this.clearText()
+      this.ketugou()
     },
     check(event){
-      const parent = this.filterByText(this.tgtparents) //nextに追加されるのノード
-      const tagetId = parent.id //nextに追加されるのノードのIDの文字列
-      if(parent.next !== undefined)
-      {
-        alert("このノードは他のノードと繋がっているため、削除できません。")
-      }
-      else{
-        alert("このノードを削除します。")
-      }
     },
     easydelete(event){
-      this.data.slice(1,1)
-      //this.data[0].next[0] = '3'
-      alert("最後の項目を削除しました")
-      this.currentmaxid--
+      alert("削除を始めます。")
+      var deleteObj = 0
+      const parent = this.filterByText(this.tgtparents) //nextに追加されるのノード
+      const tagetId = parent.id //nextに追加されるのノードのIDの文字列
+      this.node1=this.data.concat()
+      this.data.splice(1,this.data.length-1)
+      //this.data[0].next.splice(0,this.data[0].next.length)
+      alert(tagetId+"番を削除します"+'\n  currentmaxid is'+this.currentmaxid)
+        for(let i =0; i < this.currentmaxid;i++)
+        {
+          alert(i+1+"回目。")
+          if (this.node1[i].id === tagetId) //該当するIDを見つけた時
+          {
+            alert("削除対象を見つけました。")
+            if(this.node1[i].next === undefined || this.node1[i].next.length == 0){
+              alert("このノードを削除します。")
+              deleteObj = i
+              alert("このノードを削除しました。node1の長さは" + this.node1.length + "です。")
+            }
+            else{
+              alert("このノードは他のノードと繋がっているため、削除できません。")
+            }
+          }
+        }
+        if(deleteObj != 0){
+          this.node1.splice(deleteObj,1)
+        }
+        
+        for(let k =0; k < this.currentmaxid;k++)
+        {
+          this.currentmaxid = this.node1.length
+          alert("このノードと繋がっているノードからノードから対象を削除します。")
+          this.serchNext(this.node1[k].next,tagetId)
+        }
+          //this.reTakeNo()
+      //this.node1[1].next.splice(0,1)
+      this.deleteCount++
+      this.clearText()
+      this.ketugou()
     },
     ketugou(event){
-      alert("結合します")
+      alert("currentmaxidを再採番し、結合します")
+      this.currentmaxid = this.node1.length
       for(let i = 1;i<this.node1.length;i++)//一つ目のノードを残すためにi=1にしてます。
       {
+        alert("結合pushします。")
         this.data.push(this.node1[i])
+      }
+      alert("結合終えました。")
+      console.log(this.data[0].text)
+      this.node1.splice(0,this.node1.length)
+    },
+    serchNext(nextList,deletId){
+      alert("Next整理")
+      //alert(deletId+"; deleteId")
+      //alert(nextList[0]+"; nextList[0]")
+      //alert(nextList.length.toString()+"; nextList.length")
+      for(let ii=0;ii<nextList.length;ii++){
+        alert("Next整理 For開始")
+         if(nextList[ii] == deletId){
+          alert(nextList[ii]+"; nextList"+"  "+deletId+"; deleteId")
+          nextList.splice(0,1)
+         }
+      }
+    },
+    reTakeNo(event){
+      for(let i = 0; i < this.currentmaxid;i++){
+        this.node1[i].id = (i+1).toString()
       }
     }
   },
   components:{
     markdown:markdown,
     //editor:editor,
-    eMark:eMark,
+    Login:Login
   }
 }
 </script>

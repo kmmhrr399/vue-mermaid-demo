@@ -7,6 +7,13 @@
     "_name": "_8ba40018"
   },
   {
+    "name": "login",
+    "path": "/login",
+    "component": "/Users/haruki/MyVueMermaid/pages/login.vue",
+    "chunkName": "pages/login",
+    "_name": "_7bade9ea"
+  },
+  {
     "name": "markdown",
     "path": "/markdown",
     "component": "/Users/haruki/MyVueMermaid/pages/markdown.vue",
@@ -19,6 +26,13 @@
     "component": "/Users/haruki/MyVueMermaid/pages/marked.vue",
     "chunkName": "pages/marked",
     "_name": "_2f79bc7a"
+  },
+  {
+    "name": "mermaid",
+    "path": "/mermaid",
+    "component": "/Users/haruki/MyVueMermaid/pages/mermaid.vue",
+    "chunkName": "pages/mermaid",
+    "_name": "_cf2500aa"
   },
   {
     "name": "index",
