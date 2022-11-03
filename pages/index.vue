@@ -174,6 +174,7 @@ export default {
       const newNode = {
         id: this.existCount.toString(),
         text: newtext,
+        next: [],
         editable: true
       }
       this.node1.push(newNode)
@@ -249,38 +250,40 @@ export default {
     },
     easydelete(event){
       alert("削除を始めます。")
-      var deleteObj = 0
+      var deleteObjNo = 0
+      const deleteSize = this.deleteCount + this.existCount
       const parent = this.filterByText(this.tgtparents) //nextに追加されるのノード
       const tagetId = parent.id //nextに追加されるのノードのIDの文字列
       this.node1=this.data.concat()
       this.data.splice(1,this.data.length-1)
       //this.data[0].next.splice(0,this.data[0].next.length)
-      alert(tagetId+"番を削除します"+'\n  currentmaxid is'+this.currentmaxid)
-        for(let i =0; i < this.currentmaxid;i++)
+      alert(tagetId+"番を削除します"+'\n  deleteSize is'+deleteSize)
+        for(let i =0; i < deleteSize ;i++)
         {
           alert(i+1+"回目。")
           if (this.node1[i].id === tagetId) //該当するIDを見つけた時
           {
             alert("削除対象を見つけました。")
             if(this.node1[i].next === undefined || this.node1[i].next.length == 0){
-              alert("このノードを削除します。")
-              deleteObj = i
-              alert("このノードを削除しました。node1の長さは" + this.node1.length + "です。")
+              deleteObjNo = i
             }
             else{
               alert("このノードは他のノードと繋がっているため、削除できません。")
             }
           }
         }
-        if(deleteObj != 0){
-          this.node1.splice(deleteObj,1)
-        }
-        
         for(let k =0; k < this.currentmaxid;k++)
         {
-          this.currentmaxid = this.node1.length
-          alert("このノードと繋がっているノードからノードから対象を削除します。")
-          this.serchNext(this.node1[k].next,tagetId)
+          if(this.node1[k].next.length > 0)
+          {
+            alert(k+" 回目　このノードと繋がっているノードから対象を削除します。")
+            this.serchAndDeleteNext(this.node1[k].next,tagetId)
+          }
+        }
+        if(deleteObjNo != 0){
+          alert(deleteObjNo+" 番のノードを削除します。")
+          this.node1.splice(deleteObjNo,1)
+          alert(deleteObjNo+" 番のノードを削除しました。node1の長さは" + this.node1.length + "です。")
         }
           //this.reTakeNo()
       //this.node1[1].next.splice(0,1)
@@ -300,8 +303,8 @@ export default {
       console.log(this.data[0].text)
       this.node1.splice(0,this.node1.length)
     },
-    serchNext(nextList,deletId){
-      alert("Next整理")
+    serchAndDeleteNext(nextList,deletId){
+      alert("Next整理 nextList.length = " + nextList.length )
       //alert(deletId+"; deleteId")
       //alert(nextList[0]+"; nextList[0]")
       //alert(nextList.length.toString()+"; nextList.length")
