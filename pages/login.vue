@@ -4,6 +4,8 @@
       <span>
         <span>Google</span>
         <span>{{name}}</span>
+        <button @click="saveMemos">botan</button>
+        <span>{{word}}</span>
       </span>
     </button>
   </v-main>
@@ -11,6 +13,8 @@
 
 <script>
 import firebase from "firebase";
+import {database} from "~/plugins/firebase.js";
+
 
 export default {
     name:"Login",
@@ -18,6 +22,7 @@ export default {
     return {
       isLoginModalActive: true,
       name: "",
+      word: "",
     };
   },
   methods: {
@@ -70,11 +75,11 @@ export default {
         .then(this.setPersistence)
         .then(auth)
         .then(getAccountData)
-        .then(userObject => this.createPhotoURL(userObject))
-        .then(userObject => this.setPublicUserData(userObject))
-        .then(userObject => this.setPrivateUserData(userObject))
-        .then(userObject => this.setLocalUserData(userObject))
-        .catch(error => this.onRejectted(error));
+        //.then(userObject => this.createPhotoURL(userObject))
+        //.then(userObject => this.setPublicUserData(userObject))
+        //.then(userObject => this.setPrivateUserData(userObject))
+        //.then(userObject => this.setLocalUserData(userObject))
+        //.catch(error => this.onRejectted(error));//上の４つのthenがないからここでエラー出てた。
     },
     // ** ① 認証状態を明示的にセットする
     setPersistence() {
@@ -86,6 +91,11 @@ export default {
             resolve();
           });
       });
+    },
+    saveMemos(){
+      database
+        .ref("test/")
+        .set(this.name);
     },
     // ** エラー処理
     onRejectted(error) {

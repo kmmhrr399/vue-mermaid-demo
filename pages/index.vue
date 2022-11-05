@@ -1,331 +1,117 @@
 <template>
   <div class="container">
-    <div class="titled">
-      <Login></Login>
-      <div class="inputt">
-        Set Parent :
-        <input v-model="tgtparents" class="compwht" />
-      </div>
-      <div class="inputt">
-        NO:
-        <input v-model="tgnumber" class="compwht" />
-        <button :disabled="isButtonAble" class="compwht" @click="deleteNode">
-          Delete
-        </button>
-      </div>
-      <div class="inputt">
-        Set Text : <input v-model="newText" class="compwht" />
-        <button :disabled="isButtonAble" class="compwht" @click="addNewNode">
-          Add
-        </button>
-      </div>
-        <div class = "inputt">
-          Link:
-        <input v-model="nextId" class="compwht" />
-        <button :disabled="isButtonAble" class="compwht" @click="addNext">
-          Link
-        </button>
-        </div>
-        <div class = "inputt">
-          Edit:
-        <input v-model="editText" class="compwht" />
-        <button :disabled="isButtonAble" class="compwht" @click="editNode">
-          Edit
-        </button>
-        </div>
-      <br />
-      check parent exist :{{ isexistparent }}
-      <button class="compwht" @click="check">
-          check
-        </button>
-              <button :disabled="isButtonAble" class="compwht" @click="easydelete">
-          EasyDelete
-        </button>
-        <button class="compwht" @click="ketugou">
-          結合
-        </button>
-    <vue-mermaid
-        class = "mermaid"
-        :nodes="data"
-        :config="mermaid"
-        type="graph TD"
-        @nodeClick="alertNode"
-      ></vue-mermaid>
-    </div>
-    <div class = "markdown">
-      <markdown :message='nodeMemoTitle' :id="nodeMemoId"></markdown>
-      <!-- <eMark></eMark> -->
-    </div>
+    <dev class = "sidebar">
+      <button @click="google">
+        <span>
+          <span>Google</span>
+          <span>{{name}}</span>
+          <button @click="saveMemos">botan</button>
+          <span>{{word}}</span>
+        </span>
+    </button>
+    </dev>
+    <mermaid></mermaid>
   </div>
 </template>
 
 <script>
-import markdown from './markdown.vue'
-//import editor from './marked.vue'
 import Login from './login.vue'
+import mermaid from './mermaid.vue'
 export default {
   data() {
     return {
-      tgtparents: '',
-      newText: '',
-      tgnumber: '',
-      nextId: '',
-      editText: '',
-      currentmaxid:4,
-      deleteCount:0,
-      existCount:4,
-      nodeMemoTitle:'nodeMemo...',
-      nodeMemoId:"1",
-      title: 'vue-mermaid',
-      mermaid: {
-        theme: 'default',
-        startOnLoad: !1,
-        securityLevel: 'loose'
-      },
-      data: [
-        {
-          id: '1',
-          text: 'A',
-          editable: true,
-          next :['2','3'],
-        },
-        {
-          id: '2',
-          text: 'B',
-          editable: true,
-          next :[],
-        },
-        {
-          id: '3',
-          text: 'C',
-          editable: true,
-          next :['4'],
-        },
-        {
-          id: '4',
-          text: 'D',
-          editable: true,
-          next :[],
-        },
-      ],
-      node1:[
-      ]
-
-    }
-  },
-  computed: {
-    countid(event){
-      return this.deleteCount + this.existCount
-    },
-    isexistparent(event) {
-      return !this.isButtonAble ? 'OK' : 'NG'
-    },
-    isButtonAble(event) {
-      return this.filterByText(this.tgtparents) === null
-    },
-    nowNextA(event) {
-      return this.data[0].next
-    }
+      isLoginModalActive: true,
+      name: "",
+      word: "",
+    };
   },
   methods: {
+    // ** Google認証を行うときに呼び出される関数
+    google() {
+      // ** ② Google認証
+      const auth = () => {
+        return new Promise((resolve, reject) => {
+          const authUI = new firebase.auth.GoogleAuthProvider();
+          console.log("auth");
+          // This gives you a the Google OAuth 1.0 Access Token and Secret.
+          firebase
+            .auth()
+            .signInWithPopup(authUI)
+            .then(result => {
+              resolve(result);
+            })
+            .catch(error => {
+              // Handle Errors here.
+              const errorCode = error.code;
+              const errorMessage = error.message;
+              const email = error.email;
+              const credential = error.credential;
+              reject(error);
+            });
+        });
+      };
 
-    alertNode(nodeId) {
-      const data = this.filterById(nodeId)
-      alert('clicked node = ' + data.text + '\n  number is'+data.id)
-      this.tgtparents = data.text
-      this.tgnumber = data.id
-      this.nodeMemo = data.text
-      this.nodeMemoTitle = data.text
-      this.nodeMemoId = data.id
-    },
-    filterByText(text) {
-      const dataarr = this.data //export default のdata内にあるdata配列をdataarrに入れる
-      for (let i = 0; i < this.currentmaxid; i++) {
-        if (dataarr[i].text === text) return dataarr[i]
-      }//dataarrにあるテキストと入力したテキストが一致したら、この関数は一致したオブジェクトの内容をもつ。
-      return null
-    },
-    filterById(id) {
-      const dataarr = this.data
-      for (let i = 0; i < this.currentmaxid; i++) {
-        if (dataarr[i].id == id) return dataarr[i]
-      }
-      return null
-    },
-    addNewNode(event) {
-      const parent = this.filterByText(this.tgtparents)
-      const tagetId = parent.id
-      const newtext = this.newText === '' ? 'new_el' : this.newText
-      this.node1=this.data.concat()
-      //画面に描画するための”data”の中身を削除する。
-      this.data.length =1
-      this.currentmaxid++
-      this.existCount++
-      //目的ののーどIDを見つけ出し、もし初めてリンクするなら、リンクという配列を作る。
-      for (let i = 0; i < this.currentmaxid - 1; i++) {
-        if (this.node1[i].id === tagetId) {
-          const newel = String(this.currentmaxid)
-          if (this.node1[i].next === undefined) {
-            this.node1[i].next = []
-          }
-          this.node1[i].next.push(this.existCount.toString())
-        }
-      }
-      const newNode = {
-        id: this.existCount.toString(),
-        text: newtext,
-        next: [],
-        editable: true
-      }
-      this.node1.push(newNode)
-      this.clearText()
-      this.ketugou();
-    },
+      // ** ③ 認証後のユーザー情報を取得してオブジェクト化
+      const getAccountData = result => {
+        return new Promise((resolve, reject) => {
+          let userObject = {};
+          let user = result.user;
+          userObject.token = result.credential.accessToken;
+          userObject.refreshToken = user.refreshToken;
+          userObject.uid = user.uid;
+          userObject.displayName = user.displayName;
+          userObject.photoURL = user.photoURL;
+          userObject.uid = user.uid;
+          userObject.email = user.email;
+          userObject.isNewUser = result.additionalUserInfo.isNewUser;
+          userObject.providerId = result.additionalUserInfo.providerId;
+          resolve(userObject);
+          this.name = userObject.displayName;
+        });
+      };
 
-    clearText(event){
-      this.tgtparents =""
-      this.newText=""
-      this.tgnumber =""
-      this.nextId =""
+      // ** 同期的に順番に処理を実行する
+      Promise.resolve()
+        .then(this.setPersistence)
+        .then(auth)
+        .then(getAccountData)
+        //.then(userObject => this.createPhotoURL(userObject))
+        //.then(userObject => this.setPublicUserData(userObject))
+        //.then(userObject => this.setPrivateUserData(userObject))
+        //.then(userObject => this.setLocalUserData(userObject))
+        //.catch(error => this.onRejectted(error));//上の４つのthenがないからここでエラー出てた。
     },
-    addNext(event) {
-      const parent = this.filterByText(this.tgtparents) //nextに追加されるのノード
-      const tagetId = parent.id //nextに追加されるのノードのIDの文字列
-      const child = this.filterByText(this.nextId)
-      this.node1=this.data.concat()
-      this.data.length =1
-      for (let i = 0; i < this.node1.length; i++) //該当するID探して、nextに追加する
-      {
-        if (this.node1[i].id === tagetId) //該当するIDを見つけた時
-        {
-          const newel = String(this.nextId) //newelに新しいIDの文字列を加える。既存のノードにnextを追加するときはここをいじる
-          if (this.node1[i].next === undefined) {
-            this.node1[i].next = []
-          }
-          this.node1[i].next.push(child.id)
-        }
-      }
-      this.clearText()
-      this.ketugou()
+    // ** ① 認証状態を明示的にセットする
+    setPersistence() {
+      return new Promise((resolve, reject) => {
+        firebase
+          .auth()
+          .setPersistence(firebase.auth.Auth.Persistence.LOCAL)
+          .then(result => {
+            resolve();
+          });
+      });
     },
-    editNode(event) {
-      const parent = this.filterByText(this.tgtparents) //nextに追加されるのノード
-      const tagetId = parent.id //nextに追加されるのノードのIDの文字列
-      for (let i = 0; i < this.currentmaxid; i++) //該当するID探して、nextに追加する
-      {
-        if (this.data[i].id === tagetId) //該当するIDを見つけた時
-        {
-          this.data[i].text=this.editText
-        }
-      }
-      this.clearText()
+    saveMemos(){
+      database
+        .ref("test/")
+        .set(this.name);
     },
-    deleteNode(event) {
-      alert("削除を始めます。")
-      const parent = this.filterByText(this.tgtparents) //nextに追加されるのノード
-      const tagetId = parent.id //nextに追加されるのノードのIDの文字列
-      this.node1=this.data.concat()
-      this.data.length =1
-      alert(tagetId+"番を削除します")
-        for(let i =0; i < this.currentmaxid;i++)
-        {
-          alert(i+1+"回目。")
-          if (this.node1[i].id === tagetId) //該当するIDを見つけた時
-          {
-            alert("削除対象を見つけました。")
-            if(this.node1[i].next === undefined || this.node1[i].next == []){
-              alert("このノードを削除します。")
-              this.node1.splice(i,1)
-              alert("このノードを削除しました。node1の長さは" + this.node1.length + "です。")
-            }
-            else{
-              alert("このノードは他のノードと繋がっているため、削除できません。")
-            }
-          }
-        }
-      this.clearText()
-      this.ketugou()
-    },
-    check(event){
-    },
-    easydelete(event){
-      alert("削除を始めます。")
-      var deleteObjNo = 0
-      const deleteSize = this.deleteCount + this.existCount
-      const parent = this.filterByText(this.tgtparents) //nextに追加されるのノード
-      const tagetId = parent.id //nextに追加されるのノードのIDの文字列
-      this.node1=this.data.concat()
-      this.data.splice(1,this.data.length-1)
-      //this.data[0].next.splice(0,this.data[0].next.length)
-      alert(tagetId+"番を削除します"+'\n  deleteSize is'+deleteSize)
-        for(let i =0; i < deleteSize ;i++)
-        {
-          alert(i+1+"回目。")
-          if (this.node1[i].id === tagetId) //該当するIDを見つけた時
-          {
-            alert("削除対象を見つけました。")
-            if(this.node1[i].next === undefined || this.node1[i].next.length == 0){
-              deleteObjNo = i
-            }
-            else{
-              alert("このノードは他のノードと繋がっているため、削除できません。")
-            }
-          }
-        }
-        for(let k =0; k < this.currentmaxid;k++)
-        {
-          if(this.node1[k].next.length > 0)
-          {
-            alert(k+" 回目　このノードと繋がっているノードから対象を削除します。")
-            this.serchAndDeleteNext(this.node1[k].next,tagetId)
-          }
-        }
-        if(deleteObjNo != 0){
-          alert(deleteObjNo+" 番のノードを削除します。")
-          this.node1.splice(deleteObjNo,1)
-          alert(deleteObjNo+" 番のノードを削除しました。node1の長さは" + this.node1.length + "です。")
-        }
-          //this.reTakeNo()
-      //this.node1[1].next.splice(0,1)
-      this.deleteCount++
-      this.clearText()
-      this.ketugou()
-    },
-    ketugou(event){
-      alert("currentmaxidを再採番し、結合します")
-      this.currentmaxid = this.node1.length
-      for(let i = 1;i<this.node1.length;i++)//一つ目のノードを残すためにi=1にしてます。
-      {
-        alert("結合pushします。")
-        this.data.push(this.node1[i])
-      }
-      alert("結合終えました。")
-      console.log(this.data[0].text)
-      this.node1.splice(0,this.node1.length)
-    },
-    serchAndDeleteNext(nextList,deletId){
-      alert("Next整理 nextList.length = " + nextList.length )
-      //alert(deletId+"; deleteId")
-      //alert(nextList[0]+"; nextList[0]")
-      //alert(nextList.length.toString()+"; nextList.length")
-      for(let ii=0;ii<nextList.length;ii++){
-        alert("Next整理 For開始")
-         if(nextList[ii] == deletId){
-          alert(nextList[ii]+"; nextList"+"  "+deletId+"; deleteId")
-          nextList.splice(0,1)
-         }
-      }
-    },
-    reTakeNo(event){
-      for(let i = 0; i < this.currentmaxid;i++){
-        this.node1[i].id = (i+1).toString()
-      }
+    // ** エラー処理
+    onRejectted(error) {
+      this.$buefy.toast.open({
+        duration: 5000,
+        message: `ログインに失敗しました。`,
+        position: "is-bottom",
+        type: "is-danger"
+      });
+      this.isLoginModalActive = false;
+      console.log("onRejectted", error);
     }
-  },
+   },
   components:{
-    markdown:markdown,
-    //editor:editor,
-    Login:Login
+    mermaid:mermaid,
+    Login:Login,
   }
 }
 </script>
@@ -380,6 +166,10 @@ export default {
 
 .mermaid{
   width: flex;
+}
+
+.sidebar{
+  width: 60pt;
 }
 
 </style>

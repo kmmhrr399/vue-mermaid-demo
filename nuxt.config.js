@@ -51,6 +51,7 @@ export default {
     config: {
       apiKey: "AIzaSyDj0iJjFlV-NbF0LZKJcEMBAKVzA-JF6ok",
       authDomain: "vuemermaidmarkdown1.firebaseapp.com",
+      databaseURL: "https://vuemermaidmarkdown1-default-rtdb.asia-southeast1.firebasedatabase.app",
       projectId: "vuemermaidmarkdown1",
       storageBucket: "vuemermaidmarkdown1.appspot.com",
       messagingSenderId: "843442527675",
@@ -58,7 +59,8 @@ export default {
       measurementId: "G-0QHG8DC1N2"
     },
     services: {
-      auth: true // Just as example. Can be any other service.
+      auth: true, // Just as example. Can be any other service.
+      database: true
     }
   },
   /*

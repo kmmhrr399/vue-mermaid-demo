@@ -1,26 +1,18 @@
-// Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app"
-import { getAnalytics } from "firebase/analytics"
-import { getFirestore } from "firebase/firestore"
-import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+import firebase from 'firebase';
 
-
-// Your web app's Firebase configuration
-const firebaseConfig = {
+if (!firebase.apps.length) {
+    firebase.initializeApp({
     apiKey: "AIzaSyDj0iJjFlV-NbF0LZKJcEMBAKVzA-JF6ok",
     authDomain: "vuemermaidmarkdown1.firebaseapp.com",
+    databaseURL: "https://vuemermaidmarkdown1-default-rtdb.asia-southeast1.firebasedatabase.app",
     projectId: "vuemermaidmarkdown1",
     storageBucket: "vuemermaidmarkdown1.appspot.com",
     messagingSenderId: "843442527675",
     appId: "1:843442527675:web:6e75820d1903377939f89e",
     measurementId: "G-0QHG8DC1N2"
+})
 }
 
-const firebase = initializeApp(firebaseConfig)
-const database = getFirestore(firebase)
-const analytics = getAnalytics(firebase)
-//const getAuth = getAuth(firebase)
-//const signInWithPopup = signInWithPopup(firebase)
-//const GoogleAuthProvider = GoogleAuthProvider(firebase)
-
-export default database
+export const firestore = firebase.firestore();
+export const storage = firebase.storage();
+export const database = firebase.database();

@@ -1,8 +1,9 @@
 import createApp from './app.js'
 
 import authService from './service.auth.js'
+import databaseService from './service.database.js'
 
-const appConfig = {"apiKey":"AIzaSyDj0iJjFlV-NbF0LZKJcEMBAKVzA-JF6ok","authDomain":"vuemermaidmarkdown1.firebaseapp.com","projectId":"vuemermaidmarkdown1","storageBucket":"vuemermaidmarkdown1.appspot.com","messagingSenderId":"843442527675","appId":"1:843442527675:web:6e75820d1903377939f89e","measurementId":"G-0QHG8DC1N2"}
+const appConfig = {"apiKey":"AIzaSyDj0iJjFlV-NbF0LZKJcEMBAKVzA-JF6ok","authDomain":"vuemermaidmarkdown1.firebaseapp.com","databaseURL":"https:\u002F\u002Fvuemermaidmarkdown1-default-rtdb.asia-southeast1.firebasedatabase.app","projectId":"vuemermaidmarkdown1","storageBucket":"vuemermaidmarkdown1.appspot.com","messagingSenderId":"843442527675","appId":"1:843442527675:web:6e75820d1903377939f89e","measurementId":"G-0QHG8DC1N2"}
 
 export default async (ctx, inject) => {
   const { firebase, session } = await createApp(appConfig, ctx)
@@ -12,6 +13,7 @@ export default async (ctx, inject) => {
   if (process.server) {
     servicePromises = [
       authService(session, firebase, ctx, inject),
+    databaseService(session, firebase, ctx, inject),
 
     ]
   }
@@ -19,16 +21,19 @@ export default async (ctx, inject) => {
   if (process.client) {
     servicePromises = [
       authService(session, firebase, ctx, inject),
+      databaseService(session, firebase, ctx, inject),
 
     ]
   }
 
   const [
-    auth
+    auth,
+    database
   ] = await Promise.all(servicePromises)
 
   const fire = {
-    auth: auth
+    auth: auth,
+    database: database
   }
 
     inject('fireModule', firebase)

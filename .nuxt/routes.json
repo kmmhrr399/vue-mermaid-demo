@@ -3,42 +3,36 @@
     "name": "eMark",
     "path": "/eMark",
     "component": "/Users/haruki/MyVueMermaid/pages/eMark.vue",
-    "chunkName": "pages/eMark",
-    "_name": "_8ba40018"
+    "chunkName": "pages/eMark"
   },
   {
     "name": "login",
     "path": "/login",
     "component": "/Users/haruki/MyVueMermaid/pages/login.vue",
-    "chunkName": "pages/login",
-    "_name": "_7bade9ea"
+    "chunkName": "pages/login"
   },
   {
     "name": "markdown",
     "path": "/markdown",
     "component": "/Users/haruki/MyVueMermaid/pages/markdown.vue",
-    "chunkName": "pages/markdown",
-    "_name": "_dbfe1386"
+    "chunkName": "pages/markdown"
   },
   {
     "name": "marked",
     "path": "/marked",
     "component": "/Users/haruki/MyVueMermaid/pages/marked.vue",
-    "chunkName": "pages/marked",
-    "_name": "_2f79bc7a"
+    "chunkName": "pages/marked"
   },
   {
     "name": "mermaid",
     "path": "/mermaid",
     "component": "/Users/haruki/MyVueMermaid/pages/mermaid.vue",
-    "chunkName": "pages/mermaid",
-    "_name": "_cf2500aa"
+    "chunkName": "pages/mermaid"
   },
   {
     "name": "index",
     "path": "/",
     "component": "/Users/haruki/MyVueMermaid/pages/index.vue",
-    "chunkName": "pages/index",
-    "_name": "_0efd3018"
+    "chunkName": "pages/index"
   }
 ]
