@@ -52,18 +52,18 @@
       ></vue-mermaid>
     </div>
     <div class = "markdown">
-      <markdown :message='nodeMemoTitle' :id="nodeMemoId"></markdown>
+      <Markdown :message='nodeMemoTitle' :id="nodeMemoId"></Markdown>
       <!-- <eMark></eMark> -->
     </div>
   </div>
 </template>
 
 <script>
-import markdown from './markdown.vue'
+import Markdown from './markdown.vue'
 import firebase from 'firebase'
 import {database} from "~/plugins/firebase.js"
 export default {
-  name:"mermaid",
+  name:"Mermaid",
   data() {
     return {
       tgtparents: '',
@@ -123,7 +123,7 @@ export default {
           this.currentmaxid = this.node1.length
           for(let i = 1;i<this.node1.length;i++)//一つ目のノードを残すためにi=1にしてます。
           {
-            alert(i+ "回目の結合pushします。")
+            //alert(i+ "回目の結合pushします。")
             this.data.push(this.node1[i])
           }
           this.node1.splice(0,this.node1.length);
@@ -314,7 +314,7 @@ export default {
     }
   },
   components:{
-    markdown:markdown,
+    Markdown:Markdown,
   }
 }
 </script>

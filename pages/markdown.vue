@@ -29,6 +29,7 @@ export default
     //   //   default: null,
     //   //},
     // },
+    name:"Markdown",
     data() {
       return {
         markdownOption: {

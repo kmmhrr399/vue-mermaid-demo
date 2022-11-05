@@ -1,23 +1,17 @@
 <template>
   <div class="container">
-    <dev class = "sidebar">
-      <button @click="google">
-        <span>
-          <span>Google</span>
-          <span>{{name}}</span>
-          <button @click="saveMemos">botan</button>
-          <span>{{word}}</span>
-        </span>
-    </button>
-    </dev>
-    <mermaid></mermaid>
+    <Login class="sidebar"></Login>
+    <Mermaid></Mermaid>
   </div>
 </template>
 
 <script>
 import Login from './login.vue'
-import mermaid from './mermaid.vue'
+import Mermaid from './mermaid.vue'
+import firebase from "firebase";
+import {database} from "~/plugins/firebase.js";
 export default {
+  name:"Index",
   data() {
     return {
       isLoginModalActive: true,
@@ -110,7 +104,7 @@ export default {
     }
    },
   components:{
-    mermaid:mermaid,
+    Mermaid:Mermaid,
     Login:Login,
   }
 }
@@ -125,50 +119,7 @@ export default {
   align-items: center;
   text-align: center;
 }
-
-.titled {
-  width: 60%;
-  margin: auto;
-  align-items: left;
-  font-family: 'Quicksand', 'Source Sans Pro', -apple-system, BlinkMacSystemFont,
-    'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  display: block;
-  font-size: 20px;
-  color: #35495e;
-  letter-spacing: 1px;
-}
-
-.subtitle {
-  font-weight: 300;
-  font-size: 42px;
-  color: #526488;
-  word-spacing: 5px;
-  padding-bottom: 15px;
-}
-
-.links {
-  padding-top: 15px;
-}
-
-.inputt {
-  margin-top: 10px;
-}
-
-.compwht {
-  background-color: #c7c7c7;
-  margin-top: 5px;
-}
-
-.v-application--wrap {
-  background-color: #fff;
-  /* background-color: #979797; */
-}
-
-.mermaid{
-  width: flex;
-}
-
-.sidebar{
+.sidebar {
   width: 60pt;
 }
 
