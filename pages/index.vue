@@ -1,15 +1,22 @@
 <template>
   <div class="container">
-    <Login class="sidebar"></Login>
-    <Mermaid></Mermaid>
+    <v-main class="sidebar">
+        <v-main>
+          <button @click="google">
+            <span>
+              <span>Google</span>
+              <span>{{name}}</span>
+            </span>
+          </button>
+        </v-main>
+    </v-main>
+    <Mermaid :userName='name' :id="uId" ></Mermaid>
   </div>
 </template>
 
 <script>
-import Login from './login.vue'
 import Mermaid from './mermaid.vue'
 import firebase from "firebase";
-import {database} from "~/plugins/firebase.js";
 export default {
   name:"Index",
   data() {
@@ -17,6 +24,7 @@ export default {
       isLoginModalActive: true,
       name: "",
       word: "",
+      uId: "",
     };
   },
   methods: {
@@ -61,6 +69,7 @@ export default {
           userObject.providerId = result.additionalUserInfo.providerId;
           resolve(userObject);
           this.name = userObject.displayName;
+          this.uId = userObject.uid;
         });
       };
 
@@ -86,11 +95,6 @@ export default {
           });
       });
     },
-    saveMemos(){
-      database
-        .ref("test/")
-        .set(this.name);
-    },
     // ** エラー処理
     onRejectted(error) {
       this.$buefy.toast.open({
@@ -105,7 +109,6 @@ export default {
    },
   components:{
     Mermaid:Mermaid,
-    Login:Login,
   }
 }
 </script>

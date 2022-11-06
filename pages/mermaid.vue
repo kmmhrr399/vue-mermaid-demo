@@ -1,6 +1,7 @@
 <template>
   <div class="container">
     <div class="titled">
+      <h5>{{userName}} {{id}}</h5>
       <div class="inputt">
         Set Parent:
         <input v-model="tgtparents" class="compwht" />
@@ -64,6 +65,15 @@ import firebase from 'firebase'
 import {database} from "~/plugins/firebase.js"
 export default {
   name:"Mermaid",
+  props:
+    {
+      userName:{
+        type: String,
+      },
+      id:{
+        type: String,
+      }
+    },
   data() {
     return {
       tgtparents: '',
