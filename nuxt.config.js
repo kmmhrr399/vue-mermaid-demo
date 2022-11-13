@@ -31,7 +31,7 @@ export default {
    ** Plugins to load before mounting the App
    */
   plugins: ['~/plugins/vue-mermaid', '~/plugins/vue-simple-context-menu',
-  { src: '@/plugins/vue-mavon-editor', ssr: false},
+  { src: '@/plugins/vue-mavon-editor', ssr: false},//{ src: "@/plugins/persistedstate.js", ssr: false },
 ],
   /*
    ** Nuxt.js dev-modules
@@ -45,7 +45,7 @@ export default {
   /*
    ** Nuxt.js modules
    */
-  modules: [  '@nuxtjs/firebase',],
+  modules: [  '@nuxtjs/firebase','@nuxtjs/axios'],
   firebase: {
     // options
     config: {
@@ -61,7 +61,11 @@ export default {
     services: {
       auth: true, // Just as example. Can be any other service.
       database: true
-    }
+    },
+    axios: {
+      // proxy: true
+      credentials: true
+    },
   },
   /*
    ** vuetify module configuration

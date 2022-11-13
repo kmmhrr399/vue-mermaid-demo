@@ -52,8 +52,8 @@ export default
           subfield: true,
           preview: true
         },
-        editorOn:false,
-        model:"",
+        editorOn:true,
+        model:"aa",
       };
     },
     computed:{
