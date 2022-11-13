@@ -130,7 +130,7 @@ export default {
   },
   created: function() {
     database
-      .ref("test/")//thisはuserにかかっている
+      .ref(this.id+"/map/test/")//thisはuserにかかっている
       .once("value")
       .then(result => {
         if (result.val()) {
@@ -148,7 +148,7 @@ export default {
         }
       });
         database
-      .ref("deleteCount/")//thisはuserにかかっている
+      .ref(this.id+"/map/deleteCount/")//thisはuserにかかっている
       .once("value")
       .then(result => {
         if (result.val()) {
@@ -270,11 +270,11 @@ export default {
     },
     saveNode(event) {
       database
-        .ref(this.id+"/map/test/")
+        .ref(this.id+"/tizu/test/")
         .set(this.data);
 
       database
-        .ref(this.id+"/map/deleteCount/")
+        .ref(this.id+"/tizu/deleteCount/")
         .set(this.deleteCount);
     },
     unLink(event){

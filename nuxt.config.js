@@ -1,4 +1,5 @@
 import colors from 'vuetify/es5/util/colors'
+import { firestore } from './plugins/firebase'
 
 export default {
   mode: 'spa',
@@ -60,7 +61,8 @@ export default {
     },
     services: {
       auth: true, // Just as example. Can be any other service.
-      database: true
+      database: true,
+      firestore:true
     },
     axios: {
       // proxy: true

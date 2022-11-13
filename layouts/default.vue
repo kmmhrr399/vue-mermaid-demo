@@ -21,6 +21,10 @@
         @click.stop="miniVariant = !miniVariant"
       >
       </v-btn> -->
+      <v-btn
+        @click.stop="a">
+    ボタン
+      </v-btn>
       <v-toolbar-title v-text="title" />
       <v-spacer />
     </v-app-bar>
@@ -37,6 +41,8 @@
 
 <script>
 import firebase from "firebase"
+import {firestore,database} from "~/plugins/firebase.js"
+
 export default {
   data() {
     return {
@@ -45,6 +51,7 @@ export default {
       fixed: false,
       name: "",
       uId:"",
+      mapNameList:["tizu","mappu"],
       title: 'Book Relation Map'
     }
   },
@@ -54,6 +61,21 @@ export default {
       this.name = user.displayName;
       this.uId = user.uid;
     });
+    // database
+    //   .ref(this.id)//thisはuserにかかっている
+    //   .once("value")
+    //   .then(result => {
+    //     if (result.val()) {
+    //       this.mapNameList = result[0].val();
+    //     }
+    //   });
+    },
+    methods:{
+      a(){
+        database
+        .ref(this.uId+"/mapName/")
+        .set(this.mapNameList);
+    },
     }
 }
 </script>
