@@ -46,7 +46,7 @@ export default {
   /*
    ** Nuxt.js modules
    */
-  modules: [  '@nuxtjs/firebase','@nuxtjs/axios'],
+  modules: [  '@nuxtjs/firebase','@nuxtjs/axios','@nuxtjs/pwa',],
   firebase: {
     // options
     config: {
@@ -64,11 +64,17 @@ export default {
       database: true,
       firestore:true
     },
+  },
     axios: {
       // proxy: true
       credentials: true
     },
-  },
+
+    pwa: {
+      manifest: {
+        lang: 'ja',
+      }
+    },
   /*
    ** vuetify module configuration
    ** https://github.com/nuxt-community/vuetify-module

@@ -1,6 +1,6 @@
 <template>
     <div class="markdown-editor">
-      <button @click="changeEditorOn">edit</button>
+      <button class = "detailButton" @click="changeEditorOn">detail</button>
       <div v-if="editorOn">
         <h3>{{message}}</h3>
       <mavon-editor
@@ -18,6 +18,7 @@ export default
     {
       message:{
         type: String,
+        default:"no title"
       },
       id:{
         type: String,
@@ -71,7 +72,11 @@ export default
 
 <style>
 .markdown-editor {
-    width: 100%;
-    height: 100%;
+    width: flex;
+    height: 100pt ;
   }
+
+.detailButton{
+  top: 0pt;
+}
 </style>

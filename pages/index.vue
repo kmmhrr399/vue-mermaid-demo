@@ -28,7 +28,8 @@ export default {
       console.log(user);
       this.name = user.displayName;
       this.uId = user.uid;
-      this.isLogin = true
+      this.isLogin = true;
+      this.$store.commit("userInfo/setUserId",this.uId)
     });
   //     const auth = () => {
   //       return new Promise((resolve, reject) => {

@@ -1,0 +1,84 @@
+{
+  "_args": [
+    [
+      "vue-mermaid@0.0.12",
+      "/Users/haruki/MyVueMermaid"
+    ]
+  ],
+  "_from": "vue-mermaid@0.0.12",
+  "_id": "vue-mermaid@0.0.12",
+  "_inBundle": false,
+  "_integrity": "sha512-fB8oaPskHOD2DHuZlM/VzHPmrcaoU3daaleYCv+TPuY5/saiTv06m8SCF5+Fuk6vLQijcg1VTBPd6nnFUhmjCQ==",
+  "_location": "/vue-mermaid",
+  "_phantomChildren": {},
+  "_requested": {
+    "type": "version",
+    "registry": true,
+    "raw": "vue-mermaid@0.0.12",
+    "name": "vue-mermaid",
+    "escapedName": "vue-mermaid",
+    "rawSpec": "0.0.12",
+    "saveSpec": null,
+    "fetchSpec": "0.0.12"
+  },
+  "_requiredBy": [
+    "/"
+  ],
+  "_resolved": "https://registry.npmjs.org/vue-mermaid/-/vue-mermaid-0.0.12.tgz",
+  "_spec": "0.0.12",
+  "_where": "/Users/haruki/MyVueMermaid",
+  "author": {
+    "name": "mark_tun",
+    "email": "yuguang.liu@foxmail.com"
+  },
+  "bugs": {
+    "url": "https://github.com/robin1liu/vue-mermaid/issues"
+  },
+  "contributors": [
+    {
+      "name": "Filipe Pinheiro",
+      "email": "filipemcpinheiro@gmail.com"
+    }
+  ],
+  "dependencies": {
+    "mermaid": "^8.4.4"
+  },
+  "description": "flowchart of mermaid with vue componet",
+  "devDependencies": {
+    "@babel/core": "^7.1.0",
+    "@babel/plugin-external-helpers": "^7.0.0",
+    "@babel/preset-env": "^7.1.0",
+    "rollup": "^0.66.2",
+    "rollup-plugin-babel": "^4.0.3",
+    "rollup-plugin-commonjs": "^9.1.8",
+    "rollup-plugin-json": "^3.1.0",
+    "rollup-plugin-node-resolve": "^3.4.0",
+    "rollup-plugin-replace": "^2.0.0",
+    "rollup-plugin-uglify-es": "0.0.1",
+    "rollup-plugin-vue": "^4.3.2",
+    "vue": "^2.5.17",
+    "vue-template-compiler": "^2.5.17"
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
+  "homepage": "https://github.com/robin1liu/vue-mermaid#readme",
+  "keywords": [
+    "vue",
+    "vue-mermaid",
+    "vue flowchart",
+    "flowchart"
+  ],
+  "license": "MIT",
+  "main": "dist/vue-mermaid.js",
+  "name": "vue-mermaid",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/robin1liu/vue-mermaid.git"
+  },
+  "scripts": {
+    "build": "rollup -c"
+  },
+  "version": "0.0.12"
+}

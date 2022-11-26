@@ -2,6 +2,7 @@
   <div class="container">
     <div class="titled">
       <h5>{{userName}} {{id}}</h5>
+      <MermaidComponent />
       <v-btn @click="editParetto = !editParetto">
         編集
       </v-btn>
@@ -57,15 +58,11 @@
         @nodeClick="alertNode"
       ></vue-mermaid>
     </div>
-    <div class = "markdown">
-      <Markdown :message='nodeMemoTitle' :id="nodeMemoId"></Markdown>
-    </div>
   </div>
 </template>
 
 <script>
-import Markdown from './markdown.vue'
-import firebase from 'firebase'
+import MermaidComponent from '~/components/mermaidpalecompo.vue'
 import {database} from "~/plugins/firebase.js"
 export default {
   name:"Mermaid",
@@ -80,15 +77,15 @@ export default {
     },
   data() {
     return {
-      editParetto:true,
+      editParetto:false,
       tgtparents: '',
       newText: '',
       tgnumber: '',
       nextId: '',
       editText: '',
-      currentmaxid:4,
+      currentmaxid:6,
       deleteCount:0,
-      existCount:4,
+      existCount:6,
       totalCount:0,
       nodeMemoTitle:'nodeMemo...',
       nodeMemoId:"1",
@@ -99,55 +96,29 @@ export default {
         securityLevel: 'loose'
       },
       data: [
-        {
-          id: '1',
-          text: 'A',
+         {
+          id: "1",
+          text: "A",
+          link: "---",
+          next: ["2"],
           editable: true,
-          next :['2','3'],
+          style: "fill:#f9f,stroke:#333,stroke-width:4px"
         },
-        {
-          id: '2',
-          text: 'B',
-          editable: true,
-          next :[],
-        },
-        {
-          id: '3',
-          text: 'C',
-          editable: true,
-          next :['4'],
-        },
-        {
-          id: '4',
-          text: 'D',
-          editable: true,
-          next :[],
-        },
+        { id: "2", text: "B", edgeType: "circle", next: ["3"] },
+        { id: "3", text: "C", next: ["4", "6"], link: ["--yes-->","-->"], },
+        { id: "4", text: "D", link: ["-- This is the text ---"], next: ["5"] },
+        { id: "5", text: "E" },
+        { id: "6", text: "F" }
       ],
       node1:[
       ]
     }
   },
   created: function() {
-    database
-      .ref(this.id+"/map/test/")//thisはuserにかかっている
-      .once("value")
-      .then(result => {
-        if (result.val()) {
-          this.node1 = result.val();
-          this.data.splice(1,this.data.length);
-          this.currentmaxid = this.node1.length;
-          for(let i = 1;i<this.node1.length;i++)//一つ目のノードを残すためにi=1にしてます。
-          {
-            //alert(i+ "回目の結合pushします。")
-            this.data.push(this.node1[i])
-          }
-          this.currentmaxid = this.node1.length;
-          this.existCount = this.node1.length;
-          this.node1.splice(0,this.node1.length);
-        }
-      });
-        database
+      // this.node1 = this.$store.state.mapData.mapDataList;
+      // this.ketugou()
+      // this.existCount = this.node1.length;
+      database
       .ref(this.id+"/map/deleteCount/")//thisはuserにかかっている
       .once("value")
       .then(result => {
@@ -155,7 +126,6 @@ export default {
           this.deleteCount = result.val();
         }
       });
-
   },
   computed: {
     countid(event){
@@ -167,10 +137,39 @@ export default {
     isButtonAble(event) {
       return this.filterByText(this.tgtparents) === null
     },
-    nowNextA(event) {
-      return this.data[0].next
+    mapDataEditCount(event){
+      return this.$store.getters['mapData/getMapDataEditCount']
     },
+    changedNodeElement(){
+      return this.$store.getters['mapData/getNodechangedListLen']
+    }
   },
+   watch: {
+    mapDataEditCount (newnow,oldnow) {
+      this.$nextTick(() => {
+        const node2 = JSON.parse(JSON.stringify(this.$store.state.mapData.mapDataList));
+        this.data.length = 0;
+        alert("pageフォルダ " + this.mapDataEditCount)
+        //this.ketugou();
+        for(let i = 0;i<node2.length;i++)//一つ目のノードを残すためにi=1にしてます。
+        {
+        //alert("pageフォルダにて結合pushします。"+i+"回目")
+        this.data.push(node2[i])
+        }
+        alert("pageフォルダにて結合push終え")
+        this.currentmaxid = this.data.length
+        this.existCount = this.data.length;
+        alert("pageフォルダにてWATCH終え")
+      })
+    },
+    changedNodeElement(){
+      this.$nextTick(() => {
+        alert("nodeelement changing")
+        this.newText =this.$store.state.mapData.nodeChangedList[this.changedNodeElement-1]
+      })
+    }
+  },
+
   methods: {
     alertNode(nodeId) {
       const data = this.filterById(nodeId)
@@ -180,6 +179,8 @@ export default {
       this.nodeMemo = data.text
       this.nodeMemoTitle = data.text
       this.nodeMemoId = data.id
+      this.$store.commit("nodeTitle/setTitle",this.nodeMemoTitle)
+      this.$store.commit("nodeTitle/setId",this.nodeMemoId)
     },
     filterByText(text) {
       const dataarr = this.data; //export default のdata内にあるdata配列をdataarrに入れる
@@ -201,7 +202,7 @@ export default {
       const newtext = this.newText === '' ? 'new_el' : this.newText
       this.node1=this.data.concat()
       //画面に描画するための”data”の中身を削除する。
-      this.data.length =1
+      this.data.length =0
       this.currentmaxid++
       this.existCount++
       this.totalCount = this.existCount + this.deleteCount;
@@ -240,7 +241,7 @@ export default {
       const child = this.filterByText(this.nextId)
       alert(child.id.toString()+"が親のnextに追加されます")
       this.node1=this.data.concat()
-      this.data.length =1
+      this.data.length =0
       for (let i = 0; i < this.node1.length; i++) //該当するID探して、nextに追加する
       {
         if (this.node1[i].id === tagetId) //該当するIDを見つけた時
@@ -270,11 +271,11 @@ export default {
     },
     saveNode(event) {
       database
-        .ref(this.id+"/tizu/test/")
+        .ref(this.id+"/pra2/test/")
         .set(this.data);
 
       database
-        .ref(this.id+"/tizu/deleteCount/")
+        .ref(this.id+"/pra2/deleteCount/")
         .set(this.deleteCount);
     },
     unLink(event){
@@ -283,7 +284,7 @@ export default {
       const child = this.filterByText(this.nextId)
       alert(child.id.toString()+"が親のnextから外されます")
       this.node1=this.data.concat()
-      this.data.length =1
+      this.data.length = 0
       for (let i = 0; i < this.node1.length; i++) //該当するID探して、nextに追加する
       {
         if (this.node1[i].id === tagetId) //該当するIDを見つけた時
@@ -307,7 +308,7 @@ export default {
       const parent = this.filterByText(this.tgtparents) //nextに追加されるのノード
       const tagetId = parent.id //nextに追加されるのノードのIDの文字列
       this.node1=this.data.concat()
-      this.data.splice(1,this.data.length-1)
+      this.data.splice(0,this.data.length-1)
       //this.data[0].next.splice(0,this.data[0].next.length)
       alert(tagetId+"番を削除します"+'\n  deleteSize is'+deleteSize)
         for(let i =0; i < deleteSize ;i++)
@@ -344,15 +345,14 @@ export default {
       this.ketugou()
     },
     ketugou(event){
-      alert("currentmaxidを再採番し、結合します")
       this.currentmaxid = this.node1.length
-      for(let i = 1;i<this.node1.length;i++)//一つ目のノードを残すためにi=1にしてます。
+      for(let i = 0;i<this.node1.length;i++)//一つ目のノードを残すためにi=1にしてます。
       {
         //alert("結合pushします。")
         this.data.push(this.node1[i])
       }
       alert("結合終えました。")
-      console.log(this.data[0].text)
+      //this.$store.commit("mapData/setMapData",this.node1)//コミットはコンポーネントの方で
       this.node1.splice(0,this.node1.length)
     },
     serchAndDeleteNext(nextList,deletId){
@@ -372,7 +372,7 @@ export default {
     }
   },
   components:{
-    Markdown:Markdown,
+    MermaidComponent:MermaidComponent
   }
 }
 </script>
@@ -427,6 +427,10 @@ export default {
 
 .mermaid{
   width: flex;
+}
+
+.markdown{
+  top: 0pt;
 }
 
 </style>

@@ -1,5 +1,5 @@
 import Vue from 'vue'
-
+import Vuex from 'vuex'
 import Meta from 'vue-meta'
 import ClientOnly from 'vue-client-only'
 import NoSsr from 'vue-no-ssr'
@@ -9,10 +9,13 @@ import NuxtError from '../layouts/error.vue'
 import Nuxt from './components/nuxt.js'
 import App from './App.js'
 import { setContext, getLocation, getRouteData, normalizeError } from './utils'
+import { createStore } from './store.js'
 
 /* Plugins */
 
 import nuxt_plugin_plugin_8ad48f4c from 'nuxt_plugin_plugin_8ad48f4c' // Source: ./vuetify/plugin.js (mode: 'all')
+import nuxt_plugin_workbox_4fc89fc6 from 'nuxt_plugin_workbox_4fc89fc6' // Source: ./workbox.js (mode: 'client')
+import nuxt_plugin_metaplugin_11fe7e4e from 'nuxt_plugin_metaplugin_11fe7e4e' // Source: ./pwa/meta.plugin.js (mode: 'all')
 import nuxt_plugin_axios_1076cd2a from 'nuxt_plugin_axios_1076cd2a' // Source: ./axios.js (mode: 'all')
 import nuxt_plugin_index_7ab999a4 from 'nuxt_plugin_index_7ab999a4' // Source: ./firebase/index.js (mode: 'all')
 import nuxt_plugin_vuemermaid_0286340c from 'nuxt_plugin_vuemermaid_0286340c' // Source: ../plugins/vue-mermaid (mode: 'all')
@@ -59,8 +62,23 @@ Vue.use(Meta, {"keyName":"head","attribute":"data-n-head","ssrAttribute":"data-n
 
 const defaultTransition = {"name":"page","mode":"out-in","appear":true,"appearClass":"appear","appearActiveClass":"appear-active","appearToClass":"appear-to"}
 
+const originalRegisterModule = Vuex.Store.prototype.registerModule
+
+function registerModule (path, rawModule, options = {}) {
+  const preserveState = process.client && (
+    Array.isArray(path)
+      ? !!path.reduce((namespacedState, path) => namespacedState && namespacedState[path], this.state)
+      : path in this.state
+  )
+  return originalRegisterModule.call(this, path, rawModule, { preserveState, ...options })
+}
+
 async function createApp(ssrContext, config = {}) {
   const router = await createRouter(ssrContext, config)
+
+  const store = createStore(ssrContext)
+  // Add this.$router into store actions/mutations
+  store.$router = router
 
   // Create Root instance
 
@@ -69,6 +87,7 @@ async function createApp(ssrContext, config = {}) {
   const app = {
     head: {"titleTemplate":"%s - vue-mermaid-demo","title":"vue-mermaid-demo","meta":[{"charset":"utf-8"},{"name":"viewport","content":"width=device-width, initial-scale=1"},{"hid":"description","name":"description","content":"The demo page of &#34;vue-mermaid&#34;"}],"link":[{"rel":"icon","type":"image\u002Fx-icon","href":"\u002Ffavicon.ico"},{"rel":"stylesheet","type":"text\u002Fcss","href":"https:\u002F\u002Ffonts.googleapis.com\u002Fcss?family=Roboto:100,300,400,500,700,900&display=swap"},{"rel":"stylesheet","type":"text\u002Fcss","href":"https:\u002F\u002Fcdn.jsdelivr.net\u002Fnpm\u002F@mdi\u002Ffont@latest\u002Fcss\u002Fmaterialdesignicons.min.css"}],"style":[],"script":[]},
 
+    store,
     router,
     nuxt: {
       defaultTransition,
@@ -113,6 +132,9 @@ async function createApp(ssrContext, config = {}) {
     ...App
   }
 
+  // Make app available into store via this.app
+  store.app = app
+
   const next = ssrContext ? ssrContext.next : location => app.router.push(location)
   // Resolve route
   let route
@@ -125,6 +147,7 @@ async function createApp(ssrContext, config = {}) {
 
   // Set context to app.context
   await setContext(app, {
+    store,
     route,
     next,
     error: app.nuxt.error.bind(app),
@@ -151,6 +174,9 @@ async function createApp(ssrContext, config = {}) {
       app.context[key] = value
     }
 
+    // Add into store
+    store[key] = app[key]
+
     // Check if plugin not already installed
     const installKey = '__nuxt_' + key + '_installed__'
     if (Vue[installKey]) {
@@ -172,6 +198,13 @@ async function createApp(ssrContext, config = {}) {
   // Inject runtime config as $config
   inject('config', config)
 
+  if (process.client) {
+    // Replace store state before plugins execution
+    if (window.__NUXT__ && window.__NUXT__.state) {
+      store.replaceState(window.__NUXT__.state)
+    }
+  }
+
   // Add enablePreview(previewData = {}) in context for plugins
   if (process.static && process.client) {
     app.context.enablePreview = function (previewData = {}) {
@@ -183,6 +216,14 @@ async function createApp(ssrContext, config = {}) {
 
   if (typeof nuxt_plugin_plugin_8ad48f4c === 'function') {
     await nuxt_plugin_plugin_8ad48f4c(app.context, inject)
+  }
+
+  if (process.client && typeof nuxt_plugin_workbox_4fc89fc6 === 'function') {
+    await nuxt_plugin_workbox_4fc89fc6(app.context, inject)
+  }
+
+  if (typeof nuxt_plugin_metaplugin_11fe7e4e === 'function') {
+    await nuxt_plugin_metaplugin_11fe7e4e(app.context, inject)
   }
 
   if (typeof nuxt_plugin_axios_1076cd2a === 'function') {
@@ -241,6 +282,7 @@ async function createApp(ssrContext, config = {}) {
   })
 
   return {
+    store,
     app,
     router
   }
