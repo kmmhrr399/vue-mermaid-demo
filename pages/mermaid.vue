@@ -105,7 +105,7 @@ export default {
           style: "fill:#f9f,stroke:#333,stroke-width:4px"
         },
         { id: "2", text: "B", edgeType: "circle", next: ["3"] },
-        { id: "3", text: "C", next: ["4", "6"], link: ["--yes-->","-->"], },
+        { id: "3", text: "C", next: ["4", "6"], link: ["--yes-->","--no-->"], },
         { id: "4", text: "D", link: ["-- This is the text ---"], next: ["5"] },
         { id: "5", text: "E" },
         { id: "6", text: "F" }
