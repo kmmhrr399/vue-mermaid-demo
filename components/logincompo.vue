@@ -8,12 +8,11 @@
 </template>
 
 <script>
-import Mermaid from './mermaid.vue'
+import Mermaid from '~/pages/mermaid.vue'
 import firebase from "firebase";
-import Cookies from 'universal-cookie';
 
 export default {
-  name:"Index",
+  name:"login",
   data() {
     return {
       isLoginModalActive: true,
@@ -125,7 +124,7 @@ export default {
           resolve(userObject);
           this.name = userObject.displayName;
           this.uId = userObject.uid;
-         this.$store.commit("userInfo/setUserId",this.uId)
+          this.$store.commit("userInfo/setUserId",this.uId)
         });
       };
 

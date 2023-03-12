@@ -17,7 +17,7 @@ import {database} from "~/plugins/firebase.js";
 
 
 export default {
-    name:"Login",
+    name:"Login2",
   data() {
     return {
       isLoginModalActive: true,

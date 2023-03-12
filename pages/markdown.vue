@@ -7,11 +7,13 @@
         :toolbars="markdownOption"
         language="en"
         v-model="model"
+        @save = "save"
       />
       </div>
   </div>
 </template>
 <script>
+import {database} from "~/plugins/firebase.js"
 export default 
 {
     props:
@@ -24,12 +26,6 @@ export default
         type: String,
       }
     },
-    // {
-    //   // model: {
-    //   //   type: Object | null,
-    //   //   default: null,
-    //   //},
-    // },
     name:"Markdown",
     data() {
       return {
@@ -57,6 +53,9 @@ export default
         model:"aa",
       };
     },
+    methods:{
+      
+    },
     computed:{
       convert(){
         //this.model = this.
@@ -65,7 +64,12 @@ export default
     methods: {
           changeEditorOn(){
             return this.editorOn = !this.editorOn
-          }
+          },
+          save(){
+            database
+            .ref("map/"+this.id+"/tizu/memos/")
+            .set(this.model);
+      }
         },
   };
 </script>
@@ -73,7 +77,7 @@ export default
 <style>
 .markdown-editor {
     width: flex;
-    height: 100pt ;
+    height: flex ;
   }
 
 .detailButton{

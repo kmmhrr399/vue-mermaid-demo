@@ -70,29 +70,37 @@
       :right="right"
       fixed
       app
-      width="400pt"
+      width= 500pt
     >
       <v-list>
         <v-list-item>
-            <v-list-item-title>{{now}}</v-list-item-title>
+            <v-list-item-title>{{ uId }}</v-list-item-title>
       </v-list-item>
-        <v-list-item @click.native="right = !right">
+        <!-- <v-list-item @click.native="right = !right">
           <v-list-item-action>
             <v-icon light>
               mdi-repeat
             </v-icon>
           </v-list-item-action>
           <v-list-item-title>Switch drawer (click me)</v-list-item-title>
-        </v-list-item>
+        </v-list-item> -->
+        <!-- <v-list-item>
         <v-btn
         icon
         @click.stop="importMermaid"
       >
       ボタン
       </v-btn>
-    <div class = "markdown">
-      <Markdown :message='nodeMemoTitle' :id="nodeMemoId"></Markdown>
-    </div>
+      </v-list-item> -->
+      <br>
+      <v-list-item>
+      <MermaidComponent :userId2 ='uId'/>
+      </v-list-item>
+      <v-list-item>
+        <div class = "markdown">
+          <Markdown :message='nodeMemoTitle' :id="nodeMemoId"></Markdown>
+        </div>
+      </v-list-item>
       </v-list>
     </v-navigation-drawer>
     <v-footer
@@ -105,6 +113,7 @@
 </template>
 
 <script>
+import MermaidComponent from '~/components/mermaidpalecompo.vue'
 import Markdown from '~/pages/markdown.vue'
 import firebase from "firebase"
 import {firestore,database} from "~/plugins/firebase.js"
@@ -175,6 +184,7 @@ export default {
   },
   components:{
     Markdown:Markdown,
+    MermaidComponent:MermaidComponent,
   }
 }
 </script>

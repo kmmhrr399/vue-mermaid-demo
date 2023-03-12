@@ -4,3 +4,4 @@ firebase.json
 database.rules.json
 firestore.indexes.json
 firestore.rules
+nuxt.cofig.js

@@ -11,6 +11,7 @@ export const mutations = {
          console.log(state.mapDataList)
          state.mapDataList = mapData.concat();
         //state.mapDataList.push(mapData)
+        //Commitはコンポーネントのketsugouメソッドで行われている。
     },
     setDeleteCount (state,deletCount){
         state.deleteCountList.push(deletCount)

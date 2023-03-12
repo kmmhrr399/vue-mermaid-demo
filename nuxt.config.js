@@ -73,7 +73,7 @@ export default {
     pwa: {
       manifest: {
         lang: 'ja',
-      }
+      },
     },
   /*
    ** vuetify module configuration

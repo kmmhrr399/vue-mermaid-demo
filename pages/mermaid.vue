@@ -1,11 +1,9 @@
 <template>
   <div class="container">
     <div class="titled">
-      <h5>{{userName}} {{id}}</h5>
-      <MermaidComponent />
-      <v-btn @click="editParetto = !editParetto">
+      <!-- <v-btn @click="editParetto = !editParetto">
         編集
-      </v-btn>
+      </v-btn> -->
       <div v-if="editParetto">
       <div class="inputt">
         Set Parent:
@@ -87,6 +85,7 @@ export default {
       deleteCount:0,
       existCount:6,
       totalCount:0,
+      linkText:[],
       nodeMemoTitle:'nodeMemo...',
       nodeMemoId:"1",
       title: 'vue-mermaid',
@@ -115,17 +114,7 @@ export default {
     }
   },
   created: function() {
-      // this.node1 = this.$store.state.mapData.mapDataList;
-      // this.ketugou()
-      // this.existCount = this.node1.length;
-      database
-      .ref(this.id+"/map/deleteCount/")//thisはuserにかかっている
-      .once("value")
-      .then(result => {
-        if (result.val()) {
-          this.deleteCount = result.val();
-        }
-      });
+      
   },
   computed: {
     countid(event){
@@ -149,17 +138,17 @@ export default {
       this.$nextTick(() => {
         const node2 = JSON.parse(JSON.stringify(this.$store.state.mapData.mapDataList));
         this.data.length = 0;
-        alert("pageフォルダ " + this.mapDataEditCount)
+        console.log("pageフォルダ " + this.mapDataEditCount)
         //this.ketugou();
-        for(let i = 0;i<node2.length;i++)//一つ目のノードを残すためにi=1にしてます。
+        for(let i = 0;i<node2.length;i++)
         {
         //alert("pageフォルダにて結合pushします。"+i+"回目")
         this.data.push(node2[i])
         }
-        alert("pageフォルダにて結合push終え")
+        console.log("pageフォルダにて結合push終え")
         this.currentmaxid = this.data.length
         this.existCount = this.data.length;
-        alert("pageフォルダにてWATCH終え")
+        console.log("pageフォルダにてWATCH終え")
       })
     },
     changedNodeElement(){
@@ -173,6 +162,7 @@ export default {
   methods: {
     alertNode(nodeId) {
       const data = this.filterById(nodeId)
+      var objArr
       alert('clicked node = ' + data.text + '\n  number is'+data.id)
       this.tgtparents = data.text
       this.tgnumber = data.id
@@ -181,6 +171,25 @@ export default {
       this.nodeMemoId = data.id
       this.$store.commit("nodeTitle/setTitle",this.nodeMemoTitle)
       this.$store.commit("nodeTitle/setId",this.nodeMemoId)
+      if("link" in data){
+        for(let i=0;i<data.next.length;i++){
+          objArr = {
+            link:data.link[i],
+            next:this.filterById(data.next[i]).text
+          }
+          this.linkText.push(objArr)
+        }
+        this.$store.commit("nodeTitle/setLinkTextList",this.linkText)
+        this.$store.commit("nodeTitle/setLinkTextListCount")
+        console.log(this.linkText)
+        console.log(this.$store.state.nodeTitle.linkTextList)
+      }
+      else{
+        console.log("link無し")
+        this.$store.commit("nodeTitle/setLinkTextList",[])
+        this.$store.commit("nodeTitle/setLinkTextListCount")
+        console.log(this.$store.state.nodeTitle.linkTextList)
+      }
     },
     filterByText(text) {
       const dataarr = this.data; //export default のdata内にあるdata配列をdataarrに入れる
@@ -239,14 +248,14 @@ export default {
       const parent = this.filterByText(this.tgtparents) //nextに追加されるのノード
       const tagetId = parent.id //nextに追加されるのノードのIDの文字列
       const child = this.filterByText(this.nextId)
-      alert(child.id.toString()+"が親のnextに追加されます")
+      console.log(child.id.toString()+"が親のnextに追加されます")
       this.node1=this.data.concat()
       this.data.length =0
       for (let i = 0; i < this.node1.length; i++) //該当するID探して、nextに追加する
       {
         if (this.node1[i].id === tagetId) //該当するIDを見つけた時
         {
-          alert("該当するノードの配列上の番号は  "+tagetId+"です。")
+          console.log("該当するノードの配列上の番号は  "+tagetId+"です。")
           //const newel = String(this.nextId) //newelに新しいIDの文字列を加える。既存のノードにnextを追加するときはここをいじる
           if (this.node1[i].next === undefined) {
             this.node1[i].next = []
@@ -271,28 +280,28 @@ export default {
     },
     saveNode(event) {
       database
-        .ref(this.id+"/pra2/test/")
+        .ref("map/"+this.id+"/tizu/nodes/")
         .set(this.data);
 
       database
-        .ref(this.id+"/pra2/deleteCount/")
+        .ref("map/"+this.id+"/tizu/deleteCount/")
         .set(this.deleteCount);
     },
     unLink(event){
       const parent = this.filterByText(this.tgtparents) //nextに追加されるのノード
       const tagetId = parent.id //nextに追加されるのノードのIDの文字列
       const child = this.filterByText(this.nextId)
-      alert(child.id.toString()+"が親のnextから外されます")
+      console.log(child.id.toString()+"が親のnextから外されます")
       this.node1=this.data.concat()
       this.data.length = 0
       for (let i = 0; i < this.node1.length; i++) //該当するID探して、nextに追加する
       {
         if (this.node1[i].id === tagetId) //該当するIDを見つけた時
         {
-          alert("該当するノードの配列上の番号は  "+tagetId+"です。")
+          console.log("該当するノードの配列上の番号は  "+tagetId+"です。")
           //const newel = String(this.nextId) //newelに新しいIDの文字列を加える。既存のノードにnextを追加するときはここをいじる
           if (this.node1[i].next.includes(child.id.toString())) {
-            alert(this.node1[i].next.indexOf(child.id.toString()))
+            console.log(this.node1[i].next.indexOf(child.id.toString()))
             this.node1[i].next.splice(this.node1[i].next.indexOf(child.id.toString()),1)
           }
         }
@@ -310,10 +319,10 @@ export default {
       this.node1=this.data.concat()
       this.data.splice(0,this.data.length-1)
       //this.data[0].next.splice(0,this.data[0].next.length)
-      alert(tagetId+"番を削除します"+'\n  deleteSize is'+deleteSize)
+      console.log(tagetId+"番を削除します"+'\n  deleteSize is'+deleteSize)
         for(let i =0; i < deleteSize ;i++)
         {
-          //alert(i+1+"回目。")
+          //console.log(i+1+"回目。")
           if (this.node1[i].id === tagetId) //該当するIDを見つけた時
           {
             alert("削除対象を見つけました。")
@@ -324,7 +333,7 @@ export default {
                 if(this.node1[k].next !== undefined &&
                 this.node1[k].next.includes(i.toString()))
                 {
-                  alert(k+" 回目　このノードと繋がっているノードから対象を削除します。")
+                  console.log(k+" 回目　このノードと繋がっているノードから対象を削除します。")
                   this.serchAndDeleteNext(this.node1[k].next,tagetId)
                 }
               }
@@ -335,9 +344,9 @@ export default {
           }
         }
       if(deleteObjNo != 0){
-                alert(deleteObjNo+" 番のノードを削除します。")
+                console.log(deleteObjNo+" 番のノードを削除します。")
                 this.node1.splice(deleteObjNo,1)
-                //alert(deleteObjNo+" 番のノードを削除しました。node1の長さは" + this.node1.length + "です。")
+                //console.log(deleteObjNo+" 番のノードを削除しました。node1の長さは" + this.node1.length + "です。")
               }
               alert("削除を終了します。")
               this.deleteCount++
@@ -356,11 +365,11 @@ export default {
       this.node1.splice(0,this.node1.length)
     },
     serchAndDeleteNext(nextList,deletId){
-      alert("Next整理 nextList.length = " + nextList.length )
+      console.log("Next整理 nextList.length = " + nextList.length )
       for(let ii=0;ii<nextList.length;ii++){
-        alert("Next整理 For開始")
+        console.log("Next整理 For開始")
          if(nextList[ii] == deletId){
-          alert(nextList[ii]+"; nextList"+"  "+deletId+"; deleteId")
+          console.log(nextList[ii]+"; nextList"+"  "+deletId+"; deleteId")
           nextList.splice(ii,1)
          }
       }
@@ -369,6 +378,29 @@ export default {
       for(let i = 0; i < this.currentmaxid;i++){
         this.node1[i].id = (i+1).toString()
       }
+    },
+    getData(){
+      this.id = this.$store.state.userInfo.userId;
+      database
+      .ref("map/"+this.id+"/tizu/test/")//thisはuserにかかっている
+      .once("value")
+      .then(result => {
+        if (result.val()) {
+          const dataArr = result.val();
+          this.existCount = dataArr.length;
+          this.data.splice(1,this.data.length);
+          this.ketugou(dataArr);
+        }
+      });
+    database
+      .ref("map/"+this.id+"/tizu/deleteCount/")//thisはuserにかかっている
+      .once("value")
+      .then(result => {
+        if (result.val()) {
+          this.deleteCount = result.val();
+          this.$store.commit("mapData/setDeleteCount",this.deleteCount)
+        }
+      });
     }
   },
   components:{
