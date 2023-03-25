@@ -1,8 +1,8 @@
 import colors from 'vuetify/es5/util/colors'
-import { firestore } from './plugins/firebase'
 
 export default {
   mode: 'spa',
+  //ssr: 'false',
   /*
    ** Headers of the page
    */
@@ -41,7 +41,8 @@ export default {
     // Doc: https://github.com/nuxt-community/eslint-module
     '@nuxtjs/eslint-module',
     '@nuxtjs/vuetify',
-    //'@nuxt/postcss8',
+    //'@nuxt/postcss',
+    '@nuxt/postcss8',
   ],
   /*
    ** Nuxt.js modules
@@ -100,7 +101,6 @@ export default {
    ** Build configuration
    */
   build: {
-    
     /*
      ** You can extend webpack config here
      */
@@ -108,6 +108,25 @@ export default {
       if (ctx.isDev) {
                config.devtool = 'inline-cheap-module-source-map'
              }
-    }
+    },
+    postcss: {
+      preset: {
+        // features: {
+        //   'nesting-rules': true
+        // },
+        autoprefixer: {
+          grid: true
+        }
+      },
+      // キーとしてプラグイン名を、値として引数を追加します
+      // プラグインは前もって npm か yarn で dependencies としてインストールしておきます
+      plugins: {
+        // 値として false を渡すことによりプラグインを無効化します
+        'postcss-url': false,
+        'postcss-nested': {},
+        'postcss-responsive-type': {},
+        'postcss-hexrgba': {}
+      },
+    },
   }
 }

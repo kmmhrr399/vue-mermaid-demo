@@ -31,14 +31,16 @@
           {{list.next}} : {{list.link}}
         </li>
       </div>-->
-      <div>
-        <select v-model="nextLinkText">
+      <div class = "inputt">
+        <select v-model="PS">
+        <option disabled value="Please Select">Please Select</option>
         <option v-for="list in linkTextList"
-        v-bind:value="list.next" 
+        v-bind:value="list.link" 
         :key="list.key">
-        {{list.next}} : {{list.link}}
+        {{list.key}}{{list.next}} :
         </option>
       </select>
+      <input v-model = "nextLinkText" class="compwht" />
       </div>
       <br />
       check parent exist :{{ isexistparent }}
@@ -56,14 +58,17 @@
         <button :disabled="isButtonAble" class="compwht" @click="addNext">
           Link
         </button>
-      <button class="compwht" @click="unLink">
+      <button :disabled="isButtonAble" class="compwht" @click="unLink">
           Unkink
         </button>
         <button :disabled="isButtonAble" class="compwht" @click="editNode">
           Edit
         </button>
+        <br />
+        <button :disabled="isButtonAble" class="compwht" @click="addLinkDetail">
+          EditLinkDetail
+        </button>
       </div>
-      
     </div>
   </div>
 </template>
@@ -81,6 +86,9 @@ export default {
     },
   data() {
     return {
+      mapNameList:[],
+      mapName :'',
+      mapId:'',
       id :"",
       editParetto:true,
       tgtparents: '',
@@ -88,7 +96,8 @@ export default {
       tgnumber: '',
       nextId: '',
       editText: '',
-      nextLinkText: 'LinkText',
+      PS :'Please Select',
+      nextLinkText: '',
       linkTextList: [],
       currentmaxid:4,
       deleteCount:0,
@@ -135,8 +144,9 @@ export default {
     }
   },
   created: function() {
-    //pageでユーザー情報を保持するため
-    this.getData()
+    //pageでユーザー情報を保持するため、データの取得はWatch＞userInfoで行なっている。
+    // this.getMapData()
+    // this.getData("tizu")
   },
   computed: {
     countid(event){
@@ -165,7 +175,18 @@ export default {
     },
     linkTextListNum(){
       return this.$store.getters['nodeTitle/getLinkTextListCount']
+    },
+    mapNames(){
+      return this.$store.getters['mapData/getmapNameListLen']
     }
+    // nextLinkText(){
+    //   if(this.linkTextList.length = 0){
+    //     return 'Please Select'
+    //   }
+    //   else {
+    //     return 
+    //   }
+    // },
   },
   watch: {
     vioo (newnow,oldnow) {
@@ -198,13 +219,28 @@ export default {
   },
   userInfo(){
     this.$nextTick(() => {
-        this.getData()
+      //データの取得はここでやってる。
+      alert("this.getMapData()を処理します")
+        this.getMapData()
+    })
+  },
+  mapNames(newNum,oldNum){
+    this.$nextTick(() => {
+      alert("this.getData()を処理します")
+        this.mapName = this.$store.state.mapData.mapNameList[oldNum]
+        this.mapId = this.$store.state.mapData.mapIdList[oldNum]
+        this.getData(this.mapName)
     })
   },
   linkTextListNum(){
     this.$nextTick(() => {
         this.linkTextList = JSON.parse(JSON.stringify(this.$store.state.nodeTitle.linkTextList))
         console.log(this.linkTextList )
+    })
+  },
+  PS (){
+    this.$nextTick(() => {
+      this.nextLinkText = this.PS
     })
   }
   },
@@ -245,8 +281,10 @@ export default {
           const newel = String(this.currentmaxid)
           if (node2[i].next === undefined) {
             node2[i].next = []
+            node2[i].link = []
           }
           node2[i].next.push(this.totalCount.toString())
+          node2[i].link.push('-->')
         }
       }
       const newNode = {
@@ -310,14 +348,18 @@ export default {
       this.clearText()
       this.ketugou(node2)
     },
-    saveNode(event) {
+    saveNode() {
       database
-        .ref("map/"+this.id+"/tizu/nodes/")
+        .ref("map/"+this.id+"/map/" + this.mapId + "/nodes/")
         .set(this.data);
 
       database
-        .ref("map/"+this.id+"/tizu/deleteCount/")
+        .ref("map/"+this.id+"/map/" + this.mapId + "/deleteCount/")
         .set(this.deleteCount);
+      
+      database
+        .ref("map/"+this.id+"/map/" + this.mapId + "/name/")
+        .set(this.mapName);
     },
     unLink(event){
       const parent = this.filterByText(this.tgtparents) //nextに追加されるのノード
@@ -374,8 +416,8 @@ export default {
                 if(node2[k].next !== undefined &&
                 node2[k].next.includes(i.toString()))
                 {
-                  console.log(k+" 回目　このノードと繋がっているノードから対象を削除します。")
-                  this.serchAndDeleteNext(node2[k].next,tagetId)
+                  console.log(k+" 回目  このノードと繋がっているノードから対象を削除します。")
+                  this.serchAndDeleteNext(node2[k],tagetId)
                 }
               }
             }
@@ -395,6 +437,8 @@ export default {
       this.ketugou(node2)
     },
     ketugou(data){
+      //マップ内のノードの変更をマップに反映させる。
+      //直で書き換えると変えている途中の処理により、マップ表示ができなくなる。
       console.log("currentmaxidを再採番し、結合します")
       this.currentmaxid = data.length
       this.data[0]=data[0]
@@ -415,21 +459,19 @@ export default {
       alert("this.editCountの値は " + this.editCount)
     },
     serchAndDeleteNext(nextList,deletId){
-      alert("Next整理 nextList.length = " + nextList.length )
-      for(let ii=0;ii<nextList.length;ii++){
-        console.log("Next整理 For開始")
-         if(nextList[ii] == deletId){
-          alert(nextList[ii]+"; nextList"+"  "+deletId+"; deleteId")
-          nextList.splice(ii,1)
+      //easyDleatに使われている処理、削除する対象の下にノードがついている場合、配下のノードも削除する。
+      alert("Next整理 nextList.length = " + nextList.next.length )
+      for(let ii=0;ii<nextList.next.length;ii++){
+        console.log("Next,Link整理 For開始")
+         if(nextList.next[ii] == deletId){
+          alert(nextList.next[ii]+"; nextList"+"  "+deletId+"; deleteId")
+          nextList.next.splice(ii,1)
+          nextList.link.splice(ii,1)
          }
       }
     },
-    reTakeNo(event){
-      for(let i = 0; i < this.currentmaxid;i++){
-        this.node1[i].id = (i+1).toString()
-      }
-    },
     checkNodeName(nodeName,array){
+      //ノード名が同一のものがある場合検索に失敗するため
       for(let i = 0; i < array.length;i++){
         if(nodeName === array[i].text){
           alert("ノードの名前が重複してします。別名で登録してください")
@@ -438,21 +480,32 @@ export default {
       }
         return true
     },
-    getData(){
+    getData(mapName){
+      alert(mapName + " = mapName")
+      //DBからユーザーID内にあるマップ名が等しいものを持ってくる。
       this.id = this.$store.state.userInfo.userId;
       database
-      .ref("map/"+this.id+"/tizu/nodes/")//thisはuserにかかっている
+      .ref("map/"+this.id+"/map/"+ this.mapId+"/nodes/")//thisはuserにかかっている
       .once("value")
       .then(result => {
         if (result.val()) {
           const dataArr = result.val();
           this.existCount = dataArr.length;
-          this.data.splice(1,this.data.length);
+          this.data.splice(1);
+          this.ketugou(dataArr);
+        }
+        //新しくマップ名を作成した時、マップに登録されているノードがないため
+        //初期マップノードデータ
+        else{
+          const dataArr = [
+            {id: "1",text: "A",link: ["-->"],next: ["2"],editable: true},
+            { id: "2", text: "B", editable: true,},];
+          this.existCount = dataArr.length;
           this.ketugou(dataArr);
         }
       });
     database
-      .ref("map/"+this.id+"/tizu/deleteCount/")//thisはuserにかかっている
+      .ref("map/"+this.id+"/map/"+ this.mapId+"/deleteCount/")//thisはuserにかかっている
       .once("value")
       .then(result => {
         if (result.val()) {
@@ -460,6 +513,57 @@ export default {
           this.$store.commit("mapData/setDeleteCount",this.deleteCount)
         }
       });
+    },
+    addLinkDetail(){
+      //リンクの詳細を追加する処理、Please Selectかつ-->だけの時は何もしない。
+      //編集され-->が削除されているときは保存された時の文字列の前に「--」、後に「-->」をつける処理をする
+      if(this.nextLinkText == "Please Select" && this.nextLinkText == "-->"){
+        return
+      }
+      else{
+        this.nextLinkText = this.nextLinkText.replace(/>/g,"")
+        this.nextLinkText = this.nextLinkText.replace(/-/g,"")
+        this.nextLinkText ='--' + this.nextLinkText + '-->'
+      }
+      //PSの値が選択されたノードのLinkプロパティの何番目（０から）になるか算出して、置き換える
+      const parent = this.filterByText(this.tgtparents) //nextに追加されるのノード
+      const tagetId = parent.id //nextに追加されるのノードのIDの文字列
+      const child = this.filterByText(this.nextId)
+      const node2 = JSON.parse(JSON.stringify(this.data.concat()))
+      this.data.length =1
+      for (let i = 0; i < node2.length; i++) //該当するID探して、nextに追加する
+      {
+        if (node2[i].id === tagetId) //該当するIDを見つけた時
+        {
+          alert("該当ID発見")
+          for (let n = 0; n < node2[i].next.length; n++) //該当するID探して、nextに追加する
+          {
+            //if(){}
+              node2[i].link[0] = this.nextLinkText
+              alert(node2[i].link[n] + "  " +this.nextLinkText)
+              //break;
+          }
+        }
+      }
+      this.clearText()
+      this.ketugou(node2)
+    },
+    getMapData(){
+      //DBからユーザーID内にあるマップ名が等しいものを持ってくる。
+      this.id = this.$store.state.userInfo.userId;
+      database
+      .ref("map/"+this.id+"/mapName/")//thisはuserにかかっている
+      .once("value")
+      .then(result => {
+        if (result.val()) {
+          this.mapNameList= JSON.parse(JSON.stringify(result.val()));
+          this.$store.commit("mapData/setMapName",this.mapNameList[0].name)
+          this.$store.commit("mapData/setMapId",this.mapNameList[0].id)
+          alert("mermaidpalecompからマップデータ取得しました。  \n最初のマップ名は " + this.mapNameList[0].name + "\n 最初のマップIDは " + this.mapNameList[0].id)
+          //mapData.jsのstare情報を更新する。似た処理がログイン関係にあったはず。
+        }
+      });
+
     }
   },
   components:{

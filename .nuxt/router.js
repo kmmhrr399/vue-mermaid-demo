@@ -6,7 +6,6 @@ import scrollBehavior from './router.scrollBehavior.js'
 
 const _8ba40018 = () => interopDefault(import('../pages/eMark.vue' /* webpackChunkName: "pages/eMark" */))
 const _7bade9ea = () => interopDefault(import('../pages/login.vue' /* webpackChunkName: "pages/login" */))
-const _dbfe1386 = () => interopDefault(import('../pages/markdown.vue' /* webpackChunkName: "pages/markdown" */))
 const _cf2500aa = () => interopDefault(import('../pages/mermaid.vue' /* webpackChunkName: "pages/mermaid" */))
 const _0efd3018 = () => interopDefault(import('../pages/index.vue' /* webpackChunkName: "pages/index" */))
 
@@ -29,10 +28,6 @@ export const routerOptions = {
     path: "/login",
     component: _7bade9ea,
     name: "login"
-  }, {
-    path: "/markdown",
-    component: _dbfe1386,
-    name: "markdown"
   }, {
     path: "/mermaid",
     component: _cf2500aa,

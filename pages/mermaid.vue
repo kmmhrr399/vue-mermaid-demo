@@ -75,6 +75,7 @@ export default {
     },
   data() {
     return {
+      mapName:'',
       editParetto:false,
       tgtparents: '',
       newText: '',
@@ -98,16 +99,19 @@ export default {
          {
           id: "1",
           text: "A",
-          link: "---",
+          link: ["-->"],
           next: ["2"],
           editable: true,
-          style: "fill:#f9f,stroke:#333,stroke-width:4px"
+          //style: "fill:#f9f,stroke:#333,stroke-width:4px"
         },
-        { id: "2", text: "B", edgeType: "circle", next: ["3"] },
-        { id: "3", text: "C", next: ["4", "6"], link: ["--yes-->","--no-->"], },
-        { id: "4", text: "D", link: ["-- This is the text ---"], next: ["5"] },
-        { id: "5", text: "E" },
-        { id: "6", text: "F" }
+        { id: "2", text: "B", 
+          //edgeType: "circle",
+           //next: ["3"] 
+           },
+        // { id: "3", text: "C", next: ["4", "6"], link: ["--yes-->","--no-->"], },
+        // { id: "4", text: "D", link: ["-- This is the text ---"], next: ["5"] },
+        // { id: "5", text: "E" },
+        // { id: "6", text: "F" }
       ],
       node1:[
       ]
@@ -162,6 +166,7 @@ export default {
   methods: {
     alertNode(nodeId) {
       const data = this.filterById(nodeId)
+      var tmpObjArr = []
       var objArr
       alert('clicked node = ' + data.text + '\n  number is'+data.id)
       this.tgtparents = data.text
@@ -171,14 +176,17 @@ export default {
       this.nodeMemoId = data.id
       this.$store.commit("nodeTitle/setTitle",this.nodeMemoTitle)
       this.$store.commit("nodeTitle/setId",this.nodeMemoId)
+      //mermaidpaletにdata.linkの情報を送るための処理。
       if("link" in data){
         for(let i=0;i<data.next.length;i++){
           objArr = {
             link:data.link[i],
             next:this.filterById(data.next[i]).text
           }
-          this.linkText.push(objArr)
+          tmpObjArr.push(objArr)
         }
+        //配列.slice(start,end)で配列の一部をコピーできる。
+        this.linkText = tmpObjArr.slice(0,tmpObjArr.length)
         this.$store.commit("nodeTitle/setLinkTextList",this.linkText)
         this.$store.commit("nodeTitle/setLinkTextListCount")
         console.log(this.linkText)
@@ -380,28 +388,29 @@ export default {
       }
     },
     getData(){
+      //現在は使っていない。mermaidpalecomp＞getDataでDB情報を取得している。
       this.id = this.$store.state.userInfo.userId;
-      database
-      .ref("map/"+this.id+"/tizu/test/")//thisはuserにかかっている
-      .once("value")
-      .then(result => {
-        if (result.val()) {
-          const dataArr = result.val();
-          this.existCount = dataArr.length;
-          this.data.splice(1,this.data.length);
-          this.ketugou(dataArr);
-        }
-      });
-    database
-      .ref("map/"+this.id+"/tizu/deleteCount/")//thisはuserにかかっている
-      .once("value")
-      .then(result => {
-        if (result.val()) {
-          this.deleteCount = result.val();
-          this.$store.commit("mapData/setDeleteCount",this.deleteCount)
-        }
-      });
-    }
+    //   database
+    //   .ref("map/"+this.id+"/tizu/test/")//thisはuserにかかっている
+    //   .once("value")
+    //   .then(result => {
+    //     if (result.val()) {
+    //       const dataArr = result.val();
+    //       this.existCount = dataArr.length;
+    //       this.data.splice(1,this.data.length);
+    //       this.ketugou(dataArr);
+    //     }
+    //   });
+    // database
+    //   .ref("map/"+this.id+"/tizu/deleteCount/")//thisはuserにかかっている
+    //   .once("value")
+    //   .then(result => {
+    //     if (result.val()) {
+    //       this.deleteCount = result.val();
+    //       this.$store.commit("mapData/setDeleteCount",this.deleteCount)
+    //     }
+    //   });
+     },
   },
   components:{
     MermaidComponent:MermaidComponent

@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-          <v-btn v-if="!isLogin" @click="google">
+          <v-btn v-if= "!isLogin" @click="google">
             google
           </v-btn>
     <Mermaid v-if="isLogin" :userName='name' :id="uId" ></Mermaid>
