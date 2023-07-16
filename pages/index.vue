@@ -30,6 +30,7 @@ export default {
       this.uId = user.uid;
       this.isLogin = true;
       this.$store.commit("userInfo/setUserId",this.uId)
+         this.$router.push('#'+this.uId)
     });
   //     const auth = () => {
   //       return new Promise((resolve, reject) => {
@@ -126,6 +127,7 @@ export default {
           this.name = userObject.displayName;
           this.uId = userObject.uid;
          this.$store.commit("userInfo/setUserId",this.uId)
+         this.$router.push('#'+this.uId)
         });
       };
 

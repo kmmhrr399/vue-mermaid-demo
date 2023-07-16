@@ -1,6 +1,10 @@
 <template>
   <div class="container">
     <div class="titled">
+       <div class="home">
+        <button v-on:click="show" class="button">モーダルを出す</button>
+        <Modal :tgtparents='tgtparents' :tgnumber='tgnumber' :data='data'/>
+      </div>
       <!-- <v-btn @click="editParetto = !editParetto">
         編集
       </v-btn> -->
@@ -60,7 +64,8 @@
 </template>
 
 <script>
-import MermaidComponent from '~/components/mermaidpalecompo.vue'
+import MermaidModalComponent from '~/components/mermaidModalpalecompo.vue'
+import Modal from '@/components/Modal.vue'
 import {database} from "~/plugins/firebase.js"
 export default {
   name:"Mermaid",
@@ -90,6 +95,7 @@ export default {
       nodeMemoTitle:'nodeMemo...',
       nodeMemoId:"1",
       title: 'vue-mermaid',
+      message: '好きです！！！',
       mermaid: {
         theme: 'default',
         startOnLoad: !1,
@@ -165,6 +171,7 @@ export default {
 
   methods: {
     alertNode(nodeId) {
+      this.$modal.show('modal-test');
       const data = this.filterById(nodeId)
       var tmpObjArr = []
       var objArr
@@ -411,9 +418,16 @@ export default {
     //     }
     //   });
      },
+    show() {
+      this.$modal.show('modal-test');
+    },
+    hide() {
+      this.$modal.hide('modal-test');
+    }
   },
   components:{
-    MermaidComponent:MermaidComponent
+    MermaidModalComponent
+    ,Modal
   }
 }
 </script>

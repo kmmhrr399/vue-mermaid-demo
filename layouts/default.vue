@@ -18,19 +18,20 @@
           </v-list-item-content>
         </v-list-item>
         <v-list-item
-          v-for="(mapName, i) in mapNameList"
+          v-for="(mapName, i) in showMapNameList"
           :key="i"
           router
           exact
-          @click="changeMap(mapName.name,mapName.id)"
+          @click.stop="changeMap(mapName.name,mapName.id)"
         >
           <v-list-item-content>
-            <v-list-item-title v-if = "!editFlag">{{ mapName.name }} {{i}}番目
-              <v-icon @click.stop="changeEditMapName(i)">mdi-pen</v-icon>
+            <v-list-item-title v-if = "!editFlag">{{ mapName.name }}
+              <v-icon @click.stop="deleteMap(mapName.id)">mdi-delete</v-icon>
+              <v-icon @click.stop="changeEditFlag">mdi-pen</v-icon>
               </v-list-item-title>
             <v-list-item-title v-if = "editFlag">
               <input v-model = mapName.name />
-              <v-icon @click.stop="changeEditMapName(i)">mdi-content-save-edit-outline</v-icon>
+              <v-icon @click.stop="changeEditMapName(mapName.name,i)">mdi-content-save-edit-outline</v-icon>
               </v-list-item-title>
           </v-list-item-content>
         </v-list-item>
@@ -82,9 +83,9 @@
       width= 700px
     >
       <v-list>
-        <v-list-item>
+        <!-- <v-list-item>
             <v-list-item-title>{{ uId }}</v-list-item-title>
-      </v-list-item>
+      </v-list-item> -->
         <!-- <v-list-item @click.native="right = !right">
           <v-list-item-action>
             <v-icon light>
@@ -103,7 +104,7 @@
       </v-list-item> -->
       <br>
       <v-list-item>
-      <MermaidComponent :userId2 ='uId'/>
+      <MermaidComponent/>
       </v-list-item>
       <v-list-item>
         <div class = "markdown">
@@ -161,9 +162,11 @@ export default {
       nodeMemoId:"",
       now:"",
       mapNameList:[],
+      showMapNameList:[],
       data:[],
       showingMapName:"",
       mapId:'',
+      mapCount:0,
       editingMapName:"",
       editFlag:false,
     }
@@ -182,6 +185,22 @@ export default {
           this.mapNameList = result.val();
           console.log("defaultvueからmapName取得");
           console.log(this.mapNameList)
+          const List = []
+              for(let i = 0; i < this.mapNameList.length ;i++){
+                  //alert(this.mapNameList[i].enable)
+                if(this.mapNameList[i].enable){
+                  List.push(this.mapNameList[i])
+                }
+              }
+        this.showMapNameList = List
+        }
+      });
+      database
+      .ref("map/"+this.uId+"/mapCount/")//thisはuserにかかっている
+      .once("value")
+      .then(result => {
+        if (result.val()) {
+          this.mapCount = result.val();
         }
       });
     });
@@ -193,6 +212,7 @@ export default {
     mapNames(){
       return this.$store.getters['mapData/getmapNameListLen']
     },
+    
     },
     watch: {
     vioo (newnow,oldnow) {
@@ -209,10 +229,20 @@ export default {
       this.mapId = this.$store.state.mapData.mapIdList[oldNum];
     })
   },
+  showMapNameList(){
+    this.$nextTick(() => {
+      // this.showMapNameList = 0
+      // for(let i = 0; i < this.mapNameList.length ;i++){
+      //   if(this.mapNameList[i].enable){
+      //     this.showMapNameList[i].push(this.mapNameList[i])
+      //   }
+      // }
+      })
+    },
   },
   methods: {
     importMermaid(){
-      alert( this.vioo + "default")
+      //alert( this.vioo + "defaultからのalert")
       this.nodeMemoTitle = this.$store.state.nodeTitle.titleList[this.vioo-1]
       //alert(this.memotitle)
     },
@@ -226,19 +256,53 @@ export default {
     createMap(){
       alert("マップを新規作成します。")
       //①：DB > map > id > mapNameに新しく新しくデータを作成し、mapNameを更新する。
-      //②：①で追加したmapNameをidテーブルに追加する
+      //②：①で追加したmapNameをidテーブルに追加する。
+      this.mapCount = this.mapCount+1
+      this.mapNameList.push({
+        id:this.mapCount,
+        name:"created Map",
+        enable:true
+      })
+
+      database
+      .ref("map/"+this.uId+"/mapName/")
+      .set(this.mapNameList);
+
+      database
+      .ref("map/"+this.uId+"/mapCount/")
+        .set(this.mapCount);
     },
-    changeEditMapName(int){
-      //①：
-      this.editFlag = !this.editFlag;
+    changeEditMapName(newMapName,int){
       if(this.editFlag ===true){
+        if(this.mapNameList[int] != newMapName){
+          this.mapNameList[int].name = newMapName
+          database
+            .ref("map/"+this.uId+"/mapName/")
+            .set(this.mapNameList);
+          this.$store.commit("mapData/setMapName",newMapName)
+          this.$store.commit("mapData/setMapId",this.mapId)
+        }
         //②：③で十分"map/"+this.uId+"/mapName/"を更新して、this.mapNameListを新しいものに
         //③：引数に変更前のマップ名を控えさせて、変更された際に変更前の名前をthis.mapNameListから見つけ出し、新しいものに置き換えて更新
       }
       else{
 
       }
-    }
+      this.editFlag = !this.editFlag;
+    },
+    alertI(int){
+      //alert(int)
+    },
+    changeEditFlag(){
+      this.editFlag = !this.editFlag;
+    },
+    deleteMap(id){
+      for(let i = 0;i<this.mapNameList.length;i++){
+        if(id === i ){
+        this.mapNameList[i].enable = false
+        }
+      }
+    },
   },
   components:{
     Markdown:Markdown,

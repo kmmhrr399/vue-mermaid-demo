@@ -94,12 +94,18 @@ import firebase from 'firebase'
 import {database} from "~/plugins/firebase.js"
 export default {
   name:"MermaidComponent",
-  // props:
-  //   {
-  //     userId2:{
-  //       type: String,
-  //     }
-  //   },
+  props:
+    {
+      tgtparents:{
+        type: String,
+      },
+      tgnumber:{
+        type: String,
+      },
+      data:{
+        type: Array,
+      },
+    },
   data() {
     return {
       mapNameList:[],
@@ -107,9 +113,9 @@ export default {
       mapId:'',
       id :"",
       editParetto:true,
-      tgtparents: '',
+      //tgtparents: '',
       newText: '',
-      tgnumber: '',
+      //tgnumber: '',
       nextId: '',
       editText: '',
       PS :'Please Select',
@@ -130,34 +136,6 @@ export default {
         startOnLoad: !1,
         securityLevel: 'loose'
       },
-      data: [
-        {
-          id: '1',
-          text: 'A',
-          editable: true,
-          next :['2','3'],
-        },
-        {
-          id: '2',
-          text: 'B',
-          editable: true,
-          next :[],
-        },
-        {
-          id: '3',
-          text: 'C',
-          editable: true,
-          next :['4'],
-        },
-        {
-          id: '4',
-          text: 'D',
-          editable: true,
-          next :[],
-        },
-      ],
-      node1:[
-      ],
       edges: [
         { type: "default"},
         { type: "round"},
@@ -169,10 +147,20 @@ export default {
     }
   },
   created: function() {
-    //pageでユーザー情報を保持するため、データの取得はWatch＞userInfoで行なっている。
-    // this.getData()
+    console.log("mermaidModalpalecompo")
     // this.getMapData()
-    // this.getData("tizu")
+    // this.getData()
+    //this.tgtparents = this.$store.state.nodeTitle.titleList[this.vioo-1]
+    //this.tgnumber = this.$store.state.nodeTitle.idList[this.vioo-1]
+    this.currentmaxid = this.data.length
+    this.existCount = this.data.length
+    // this.filterByText(this.tgtparents)
+    // this.filterById(this.tgnumber)
+    //this.deleteCount = this.$store.state.mapData.DeleteCountLen[this.DeleteCountLen-1]
+    this.mapName = this.$store.state.mapData.mapNameList[this.mapNames-1]
+    this.mapId = this.$store.state.mapData.mapIdList[this.mapNames-1]
+    this.linkTextList = JSON.parse(JSON.stringify(this.$store.state.nodeTitle.linkTextList))
+    
   },
   computed: {
     countid(event){
@@ -312,7 +300,7 @@ export default {
       const newtext = this.newText === '' ? 'new_el' : this.newText
       this.$store.commit("mapData/setNodeChanged",newtext)
       const node2 = JSON.parse(JSON.stringify(this.data.concat()))
-      console.log(node2)
+      console.log("mermaidModalpalecompo\n"+node2)
       if(!this.checkNodeName(this.newText,node2)){
         this.clearText()
         return null
@@ -346,9 +334,9 @@ export default {
     },
 
     clearText(event){
-      //this.tgtparents ="" storeの値を参照しているため
+      //this.tgtparents =""
       this.newText=""
-      //this.tgnumber =""　storeの値を参照しているため
+      //this.tgnumber =""
       this.nextId =""
       this.editText =""
     },

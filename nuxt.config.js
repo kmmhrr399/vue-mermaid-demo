@@ -31,7 +31,7 @@ export default {
   /*
    ** Plugins to load before mounting the App
    */
-  plugins: ['~/plugins/vue-mermaid', '~/plugins/vue-simple-context-menu',
+  plugins: ['~/plugins/vue-mermaid', '~/plugins/vue-simple-context-menu', '~plugins/vue-js-modal.js',
   { src: '@/plugins/vue-mavon-editor', ssr: false},//{ src: "@/plugins/persistedstate.js", ssr: false },
 ],
   /*

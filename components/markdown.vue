@@ -1,6 +1,6 @@
 <template>
     <div class="markdown-editor">
-      <button class = "detailButton" @click="changeEditorOn">detail</button>
+      <!-- <button class = "detailButton" @click="changeEditorOn">detail</button> -->
       <div v-if="editorOn">
         <h3>{{message}}</h3>
       <mavon-editor
@@ -117,6 +117,7 @@ export default
     this.$nextTick(() => {
       this.showingMapName = this.$store.state.mapData.mapNameList[oldNum];
       this.mapId = this.$store.state.mapData.mapIdList[oldNum]
+      this.getData()
     })
   },
     },
@@ -138,25 +139,30 @@ export default
         return this.editorOn = !this.editorOn
       },
       save(){
+        alert("mapId = "+this.mapId + "\nuserId3"+this.userId3)
         const data =JSON.parse(JSON.stringify(this.memosList.concat()))
         const memoId = this.$store.state.nodeTitle.idList[this.vioo-1]
+        const newFlag = true;
         //memoListに保存したいIDがあれば挿入する。なければ、入れ替える。
         for(let i = 0; i < data.length;i++){
           if(data[i].id == memoId){
             data[i].model = this.model
+            newFlag = false
           }
           else{
-            const memoProps = {
+            }
+        }
+        if(newFlag){
+          const memoProps = {
               id:memoId,
               model:this.model
             }
             this.memosList.push(memoProps)
-            }
         }
         //データの登録時IDを見て保存するIDと同一のものがあった場合それを変更する。
         database
         .ref("map/"+this.userId3 + "/map/"+ this.mapId +"/memos/")
-        .set(data);
+        .set(this.memosList);
       },
       filterByMemoId(memoId) {
       const dataarr =JSON.parse(JSON.stringify(this.memosList.concat()));

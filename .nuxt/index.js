@@ -21,6 +21,7 @@ import nuxt_plugin_axios_1076cd2a from 'nuxt_plugin_axios_1076cd2a' // Source: .
 import nuxt_plugin_index_7ab999a4 from 'nuxt_plugin_index_7ab999a4' // Source: ./firebase/index.js (mode: 'all')
 import nuxt_plugin_vuemermaid_0286340c from 'nuxt_plugin_vuemermaid_0286340c' // Source: ../plugins/vue-mermaid (mode: 'all')
 import nuxt_plugin_vuesimplecontextmenu_fd74580a from 'nuxt_plugin_vuesimplecontextmenu_fd74580a' // Source: ../plugins/vue-simple-context-menu (mode: 'all')
+import nuxt_plugin_vuejsmodal_0719e4a0 from 'nuxt_plugin_vuejsmodal_0719e4a0' // Source: ../plugins/vue-js-modal.js (mode: 'all')
 import nuxt_plugin_vuemavoneditor_e5e1de58 from 'nuxt_plugin_vuemavoneditor_e5e1de58' // Source: ../plugins/vue-mavon-editor (mode: 'client')
 
 // Component: <ClientOnly>
@@ -245,6 +246,10 @@ async function createApp(ssrContext, config = {}) {
 
   if (typeof nuxt_plugin_vuesimplecontextmenu_fd74580a === 'function') {
     await nuxt_plugin_vuesimplecontextmenu_fd74580a(app.context, inject)
+  }
+
+  if (typeof nuxt_plugin_vuejsmodal_0719e4a0 === 'function') {
+    await nuxt_plugin_vuejsmodal_0719e4a0(app.context, inject)
   }
 
   if (process.client && typeof nuxt_plugin_vuemavoneditor_e5e1de58 === 'function') {
